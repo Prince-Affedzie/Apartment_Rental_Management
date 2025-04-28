@@ -1,0 +1,37 @@
+const express = require('express')
+const BodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const mongoose = require('mongoose')
+const cors = require('cors')
+const {userRouter} = require('./Routes/UserRoutes')
+const {apartmentRouter} = require('./Routes/TenantsRoutes')
+const {paymentRouter} = require('./Routes/PaymentRoute')
+const {vehicleRoute} = require('./Routes/VehicleRoutes')
+require('dotenv').config()
+
+const app = express()
+app.use(BodyParser.urlencoded({extended:true}))
+app.use(cookieParser())
+app.use(express.json())
+
+app.use(cors({
+    origin:"http://localhost:3000",
+    credentials:true
+}))
+app.use('/uploads',express.static('uploads'))
+mongoose.connect(process.env.DATABase_URL)
+     .then(()=>{
+        app.listen(process.env.PORT,()=>{
+            console.log(`Listening on Port  ${process.env.PORT}`)
+        })
+     })
+     .catch((err)=>{
+        console.log(err)
+     })
+
+require('./Utils/rentNotifier')
+
+app.use('/api',userRouter)
+app.use('/api',apartmentRouter)
+app.use('/api',paymentRouter)
+app.use('/api',vehicleRoute)
