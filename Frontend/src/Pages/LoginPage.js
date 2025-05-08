@@ -46,8 +46,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
       <ToastContainer/>
+      <h2 className="text-3xl font-extrabold text-center text-gray-100 mb-6">Property Tracking System</h2>
       <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md">
-        <h2 className="text-3xl font-extrabold text-center text-gray-100 mb-6">Property Tracking System</h2>
+       
         <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
           Welcome Back
         </h2>
