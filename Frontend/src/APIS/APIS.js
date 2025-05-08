@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API = axios.create({baseURL:"https://rental-vehicle-app-hfvqh.ondigitalocean.app/",withCredentials:true})
+const API = axios.create({baseURL:'https://rental-vehicle-app-hfvqh.ondigitalocean.app/',withCredentials:true})
 export const login =(data)=> API.post("/api/login",data)
 export const fetchProfileInfo = ()=>API.get('/api/view/profile_info')
 export const getAllUsers = ()=>API.get('/api/get/all_users')
