@@ -4,13 +4,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from "../APIS/APIS";
 import ProcessingIndicator from "../Components/units/processingIndicator";
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
+import {useProfileContext} from '../Context/fetchProfileContext'
 
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const {getProfile} = useProfileContext()
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,7 +27,8 @@ export default function LoginPage() {
         const response = await login (payload)
         if(response.status ===200){
            toast.success('Login Successful')
-            navigate('/home')
+           getProfile()
+           navigate('/home')
         }else{
             toast.error(response.error || "An error occurred. Please try again.");
             navigate('/')
