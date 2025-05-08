@@ -7,7 +7,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4 py-8">
       <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">
-        Welcome to Your Rental Manager
+        Welcome to Your Property Manager
       </h1>
       <p className="text-gray-600 text-lg mb-10 text-center max-w-xl">
         Choose which service you'd like to manage today. Everything is just a click away.

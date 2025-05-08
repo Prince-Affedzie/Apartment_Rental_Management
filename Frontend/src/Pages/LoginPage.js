@@ -99,7 +99,14 @@ export default function LoginPage() {
   
           <p className="text-center text-sm text-gray-500 mt-6">
             Don't have an account?{" "}
-            <span onClick={()=>navigate('https://prostechnologies.com/contact/')}  className="text-blue-600 cursor-pointer hover:underline">Contact Admin</span>
+            <a 
+               href="https://prostechnologies.com/contact/" 
+               target="_blank" 
+                rel="noopener noreferrer"
+                 className="text-blue-600 cursor-pointer hover:underline"
+             >
+               Contact Admin
+            </a>
           </p>
         </div>
       </div>
