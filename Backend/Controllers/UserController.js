@@ -23,7 +23,7 @@ const login = async(req,res)=>{
 
         const token = jwt.sign({id:user._id,role:user.role},process.env.token)
         console.log(token)
-        res.cookie('token',token,{httpOnly:true,secure:process.env.NODE_ENV === 'production',sameSite:'strict'})
+        res.cookie('token',token,{httpOnly:true,secure:true,sameSite: 'None'})
 
         res.status(200).json({message:"Login Successful"})
 
@@ -32,6 +32,7 @@ const login = async(req,res)=>{
         res.status(500).json({message:"Internal Server Error"})
     }
 }
+//process.env.NODE_ENV === 'production'
 
 const addNewUser = async(req,res)=>{
     try{
