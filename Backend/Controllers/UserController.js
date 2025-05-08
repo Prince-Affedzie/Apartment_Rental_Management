@@ -133,4 +133,16 @@ const getUsers = async(req,res)=>{
     }
 }
 
-module.exports = {login,addNewUser,modifyUser,removeUser,getPersonalInfo,getUsers}
+const logout = async(req,res)=>{
+    try{
+        const token = req.cookies.token
+        await res.clearCookie(token,{httpOnly:true,sameSite:'strict',secure:false})
+        res.status(200).json({message:"Logout Successful"})
+
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message:"Internal Server Error"})
+    }
+}
+
+module.exports = {login,addNewUser,modifyUser,removeUser,getPersonalInfo,getUsers,logout}
