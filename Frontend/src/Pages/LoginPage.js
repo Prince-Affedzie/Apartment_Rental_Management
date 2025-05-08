@@ -47,6 +47,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
       <ToastContainer/>
       <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md">
+        <h2 className="text-3xl font-extrabold text-center text-gray-100 mb-6">Property Tracking System</h2>
         <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
           Welcome Back
         </h2>
@@ -92,7 +93,7 @@ export default function LoginPage() {
         </form>
         <p className="text-center text-sm text-gray-500 mt-6">
           Don't have an account?{" "}
-          <span className="text-blue-600 cursor-pointer hover:underline">Contact Admin</span>
+          <span href='prostechnologies.com' className="text-blue-600 cursor-pointer hover:underline">Contact Admin</span>
         </p>
       </div>
     </div>
