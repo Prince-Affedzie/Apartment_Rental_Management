@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../Components/Layout/Sidebar';
 import TopNav from '../Components/Layout/TopNav';
@@ -9,8 +9,10 @@ import ProcessingIndicator from '../Components/units/processingIndicator';
 
 export default function AddTenantPage() {
   const navigate = useNavigate();
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isTotalAmountFocused, setIsTotalAmountFocused] = useState(false);
+  const totalAmountInputRef = useRef(null);
   const [formData, setFormData] = useState({
     tenantName: '',
     tenantPhone: '',
@@ -28,12 +30,16 @@ export default function AddTenantPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === 'totalAmount') {
+      setFormData({ ...formData, [name]: value });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await addTenantRecord(formData);
       if (response.status === 200) {
@@ -46,9 +52,27 @@ export default function AddTenantPage() {
       const errorMessage = error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred. Please try again.";
       console.log(errorMessage);
       toast.error(errorMessage);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (!isTotalAmountFocused && formData.noOfMonthsRented && formData.monthlyPrice) {
+      const calculatedTotal = parseFloat(formData.noOfMonthsRented) * parseFloat(formData.monthlyPrice);
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        totalAmount: isNaN(calculatedTotal) ? '' : calculatedTotal.toFixed(2),
+      }));
+    }
+  }, [formData.noOfMonthsRented, formData.monthlyPrice, isTotalAmountFocused]);
+
+  const handleTotalAmountFocus = () => {
+    setIsTotalAmountFocused(true);
+  };
+
+  const handleTotalAmountBlur = () => {
+    setIsTotalAmountFocused(false);
   };
 
   return (
@@ -63,15 +87,15 @@ export default function AddTenantPage() {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { label: 'Tenant Name', name: 'tenantName', type: 'text' },
-                { label: 'Phone Number', name: 'tenantPhone', type: 'text' , placeholder:'+233095093095' },
+                { label: 'Phone Number', name: 'tenantPhone', type: 'text', placeholder: '+233095093095' },
                 { label: 'Room Description', name: 'roomDescription', type: 'text' },
                 { label: 'Rented Date', name: 'rentedDate', type: 'date' },
                 { label: 'Expiration Date', name: 'expirationDate', type: 'date' },
                 { label: 'No. of Months Rented', name: 'noOfMonthsRented', type: 'number' },
                 { label: 'Utility Amount', name: 'amountPaidOnUtility', type: 'number' },
                 { label: 'Monthly Price', name: 'monthlyPrice', type: 'number' },
-                { label: 'Total Amount Paid', name: 'totalAmount', type: 'number' }
-              ].map(({ label, name, type,placeholder }) => (
+                { label: 'Total Amount ', name: 'totalAmount', type: 'number' }
+              ].map(({ label, name, type, placeholder }) => (
                 <div key={name}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                   <input
@@ -82,6 +106,9 @@ export default function AddTenantPage() {
                     placeholder={placeholder}
                     onChange={handleChange}
                     required
+                    ref={name === 'totalAmount' ? totalAmountInputRef : null}
+                    onFocus={name === 'totalAmount' ? handleTotalAmountFocus : null}
+                    onBlur={name === 'totalAmount' ? handleTotalAmountBlur : null}
                   />
                 </div>
               ))}
@@ -103,7 +130,7 @@ export default function AddTenantPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300 text-sm 
+                  className={`w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-300 text-sm
                     ${loading ? 'opacity-70 scale-95 cursor-wait transition-all duration-300' : 'transition-all duration-300'}`}
                 >
                   {loading ? <ProcessingIndicator message="Adding Tenant..." /> : 'Save'}
