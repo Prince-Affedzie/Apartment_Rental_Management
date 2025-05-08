@@ -96,8 +96,7 @@ export default function AddVehiclePage() {
           <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow">
             <h1 className="text-2xl font-bold mb-6">Add New Vehicle Record</h1>
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4">
               {/* Vehicle Type */}
               <div className="w-full col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Type</label>
