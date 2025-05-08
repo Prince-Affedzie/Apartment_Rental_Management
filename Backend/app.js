@@ -15,7 +15,7 @@ app.use(cookieParser())
 app.use(express.json())
 
 app.use(cors({
-    origin:"https://apartment-rental-management.vercel.app",
+    origin:"https://www.trackingproperty.com",
     credentials:true
 }))
 app.use('/uploads',express.static('uploads'))
