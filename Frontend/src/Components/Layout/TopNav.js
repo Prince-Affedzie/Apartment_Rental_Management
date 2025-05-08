@@ -1,8 +1,16 @@
 import { Bell, Menu, X } from 'lucide-react';
 import { useProfileContext } from '../../Context/fetchProfileContext';
+import { useEffect } from 'react';
 
 export default function TopNav({ toggleMobileMenu, mobileMenuOpen }) {
-  const {profile} = useProfileContext()
+  const {profile,getProfile} = useProfileContext()
+ 
+  useEffect(()=>{
+     if(!profile){
+      getProfile()
+     }
+  },[])
+
   return (
     <header className="bg-white shadow-sm py-4 px-6 sticky top-0 z-30">
       <div className="flex justify-between items-center flex-wrap gap-4">

@@ -56,6 +56,8 @@ export default function PaymentsListPage() {
   const indexOfFirst = indexOfLast - paymentsPerPage;
   const currentPayments = filteredPayments.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredPayments.length / paymentsPerPage);
+  const totalAmountPaid = filteredPayments.reduce((sum, p) => sum + (p.amountPaid || 0), 0);
+
 
   const Pagination = () => (
     <div className="flex justify-center mt-6 gap-2 flex-wrap">
@@ -87,6 +89,8 @@ export default function PaymentsListPage() {
 
   const LoadingSkeleton = () => (
     <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+      
+
       <table className="min-w-full table-auto animate-pulse">
         <thead className="bg-gray-100">
           <tr>
@@ -151,6 +155,9 @@ export default function PaymentsListPage() {
             <div className="text-center text-gray-500 py-10">No payments found.</div>
           ) : (
             <div className="overflow-x-auto bg-white shadow-md rounded-lg w-full">
+              <div className="text-right text-blue-700 font-semibold mb-2 pr-2">
+               Total Amount Paid: GHC {totalAmountPaid.toFixed(2)}
+             </div>
               <table className="min-w-full table-auto text-sm">
                 <thead className="bg-gray-100">
                   <tr>

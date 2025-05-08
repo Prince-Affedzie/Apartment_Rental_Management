@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { logout } from "../../APIS/APIS";
 
 export default function VehicleSidebar({ toggleMobileMenu, mobileMenuOpen }) {
   const navigate = useNavigate();
@@ -27,6 +28,18 @@ export default function VehicleSidebar({ toggleMobileMenu, mobileMenuOpen }) {
   const settingsItems = [
     { label: "Settings", icon: <Settings size={18} />, path: "/settings" },
   ];
+
+  const handleLogout = async()=>{
+      try{
+        const response = await logout()
+        if(response.status ===200){
+          navigate('/')
+        }
+  
+      }catch(err){
+        console.log(err)
+      }
+    }
 
   return (
     <>
@@ -47,7 +60,7 @@ export default function VehicleSidebar({ toggleMobileMenu, mobileMenuOpen }) {
         </div>
 
         <div className="absolute bottom-4 left-4 right-4">
-          <button className="flex items-center gap-2 w-full text-red-600 hover:bg-red-50 px-4 py-2 rounded-md">
+          <button onClick={()=>handleLogout()} className="flex items-center gap-2 w-full text-red-600 hover:bg-red-50 px-4 py-2 rounded-md">
             <LogOut size={18} />
             Logout
           </button>

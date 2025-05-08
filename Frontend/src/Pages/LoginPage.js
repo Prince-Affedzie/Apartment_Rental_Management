@@ -1,13 +1,16 @@
-import React from "react";
+import React,{ useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { login } from "../APIS/APIS";
 import ProcessingIndicator from "../Components/units/processingIndicator";
-import { useState } from "react";
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,14 +24,17 @@ export default function LoginPage() {
     try {
         const response = await login (payload)
         if(response.status ===200){
+           toast.success('Login Successful')
             navigate('/home')
         }else{
-            alert('Login Failed')
+            toast.error(response.error || "An error occurred. Please try again.");
             navigate('/')
         }
-    } catch (err) {
-      console.error("Login error:", err);
-      alert("Something went wrong. Please try again.");
+    } catch (error) {
+      console.error("Login error:", error);
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred. Please try again.";
+            console.log(errorMessage);
+            toast.error(errorMessage);
     }finally{
       setLoading(false);
     }
@@ -36,6 +42,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
+      <ToastContainer/>
       <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md">
         <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
           Welcome Back
@@ -52,14 +59,24 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+          
+         <div className="relative">
+        <label className="block text-sm font-medium text-gray-700">Password</label>
+          <input
+       name="password"
+        type={showPassword ? "text" : "password"}
+        placeholder="••••••••"
+        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+         required
+      />
+        <div 
+        onClick={() => setShowPassword(!showPassword)}
+           className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 mt-5"
+             >
+             {showPassword ? <AiFillEyeInvisible size={22} /> : <AiFillEye size={22} />}
+          </div>
+           </div>
+
           </div>
           <button
             type="submit"

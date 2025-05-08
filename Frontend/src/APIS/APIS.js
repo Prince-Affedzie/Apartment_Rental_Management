@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API = axios.create({baseURL:"http://localhost:5000",withCredentials:true})
+const API = axios.create({baseURL:"https://rental-vehicle-app-hfvqh.ondigitalocean.app/",withCredentials:true})
 export const login =(data)=> API.post("/api/login",data)
 export const fetchProfileInfo = ()=>API.get('/api/view/profile_info')
 export const getAllUsers = ()=>API.get('/api/get/all_users')
@@ -17,6 +17,7 @@ export const deleteApartment =(Id)=>API.delete(`/api/delete/apartment_property/$
 export const addNewUser =(data)=>API.post('/api/add/new_user',data)
 export const updateUser = (data)=>API.put('/api/modify/user/',data)
 export const removeUser =(Id)=>API.delete(`/api/delete/user/${Id}`)
+export const logout =()=>API.post('/api/logout')
 
 // Payments
 export const addPayment = (data)=>API.post('/api/apartment/add_payment',data)

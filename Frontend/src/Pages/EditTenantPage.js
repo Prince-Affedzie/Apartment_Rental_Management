@@ -6,6 +6,8 @@ import { fetchTenantRecord } from '../APIS/APIS';
 import { editTenant } from '../APIS/APIS';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProcessingIndicator from '../Components/units/processingIndicator';
+
 
 export default function EditTenantPage() {
   const { Id } = useParams();
@@ -67,6 +69,7 @@ export default function EditTenantPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     try {
       const response = await editTenant(Id, formData);
       if (response.status === 200) {
@@ -79,6 +82,8 @@ export default function EditTenantPage() {
       const errorMessage = error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred. Please try again.";
       console.log(errorMessage);
       toast.error(errorMessage);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -147,9 +152,13 @@ export default function EditTenantPage() {
               </select>
             </div>
             <div className="sm:col-span-2 mt-4">
-              <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-                Update Tenant
-              </button>
+              <button
+                     type="submit" className={`w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition 
+                       ${loading ? 'opacity-70 scale-95 cursor-wait transition-all duration-300' : 'transition-all duration-300'}`}
+                        disabled={loading}
+                       >
+                    {loading ? <ProcessingIndicator message="Updating Tenant..." /> : 'Update Tenant'}
+                   </button>
             </div>
           </form>
         )}

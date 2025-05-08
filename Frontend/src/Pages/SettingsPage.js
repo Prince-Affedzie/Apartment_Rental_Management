@@ -188,7 +188,7 @@ export default function SettingsPage() {
 
       <div className="flex-1 flex flex-col">
         <TopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
-        <main className="flex-1 p-6 mt-16  overflow-x:hidden">
+        <main className="flex-1 p-6 mt-7  overflow-x:hidden">
           <div className="max-w-6xl mx-auto">
             <div className="bg-white shadow rounded-lg overflow-hidden">
               {/* Tabs */}

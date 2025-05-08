@@ -125,7 +125,12 @@ export default function ApartmentsListPage() {
                </button>
 
             </div>
+            
           </div>
+          <div className="bg-white shadow rounded-lg p-4 w-1/3 mb-10 ">
+          <p className="text-gray-500">Total Properties</p>
+          <p className="text-2xl font-bold">{apartments.length}</p>
+            </div>
 
           {loading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -158,7 +163,7 @@ export default function ApartmentsListPage() {
                       </span>
                     </div>
                     <p className="text-sm text-gray-600 mb-1">{apt.location}</p>
-                    <p className="text-sm font-medium text-blue-600 mb-3">GHC {apt.price}</p>
+                    <p className="text-sm font-medium text-blue-600 mb-3">GHC {apt.price}/per month</p>
                     <div className="flex justify-between items-center text-sm">
                       <button className="text-blue-500 hover:underline">Details</button>
                       <div className="flex gap-2">
