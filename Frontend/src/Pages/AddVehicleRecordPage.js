@@ -96,9 +96,10 @@ export default function AddVehiclePage() {
           <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow">
             <h1 className="text-2xl font-bold mb-6">Add New Vehicle Record</h1>
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
               {/* Vehicle Type */}
-              <div className="col-span-1">
+              <div className="w-full col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Type</label>
                 <select
                   name="vehicleType"
@@ -127,7 +128,7 @@ export default function AddVehiclePage() {
                 ['contactDetails.location', 'Location'],
                 ['licenseNum', 'License Number'],
               ].map(([key, label]) => (
-                <div className="col-span-1" key={key}>
+                <div className="w-full col-span-1" key={key}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                   <input
                     name={key}
@@ -142,7 +143,7 @@ export default function AddVehiclePage() {
               ))}
 
               {/* License Type */}
-              <div className="col-span-1">
+              <div className="w-full col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">License Type</label>
                 <select
                   name="licenseType"
@@ -158,7 +159,7 @@ export default function AddVehiclePage() {
               </div>
 
               {/* License Expiry */}
-              <div className="col-span-1">
+              <div className="w-full col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">License Expiry Date</label>
                 <input
                   type="date"
@@ -171,7 +172,7 @@ export default function AddVehiclePage() {
               </div>
 
               {/* Maintenance History */}
-              <div className="col-span-2">
+              <div className="w-full col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Maintenance History</label>
                 {formData.maintenanceHist.map((item, index) => (
                   <div key={index} className="flex flex-col sm:flex-row gap-2 mb-2">
@@ -180,7 +181,7 @@ export default function AddVehiclePage() {
                       placeholder="Maintenance Detail"
                       value={item.hist}
                       onChange={(e) => handleMaintenanceChange(index, 'hist', e.target.value)}
-                      className="flex-1 px-4 py-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className=" w-full flex-1 px-4 py-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
                       type="date"
