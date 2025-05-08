@@ -29,14 +29,13 @@ export default function Sidebar({ toggleMobileMenu, mobileMenuOpen }) {
     { label: "Settings", icon: <Settings size={18} />, path: "/settings" },
   ];
 
-  const handleLogout = async()=>{
-    try{
+  const handleLogout = async() => {
+    try {
       const response = await logout()
-      if(response.status ===200){
+      if(response.status === 200) {
         navigate('/')
       }
-
-    }catch(err){
+    } catch(err) {
       console.log(err)
     }
   }
@@ -45,8 +44,8 @@ export default function Sidebar({ toggleMobileMenu, mobileMenuOpen }) {
     <>
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-30 mt-0 mb-0 w-64 bg-white shadow-lg z-40 transform transition-transform duration-300 ease-in-out
-          ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:block`}
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-40 transform transition-transform duration-300 ease-in-out
+          ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:block flex flex-col`}
       >
         {/* Close Icon (Mobile only) */}
         <div className="md:hidden flex justify-end p-4">
@@ -55,15 +54,18 @@ export default function Sidebar({ toggleMobileMenu, mobileMenuOpen }) {
           </button>
         </div>
 
-        <div className="p-4">
+        <div className="p-4 flex-grow overflow-y-auto">
           <h2 className="text-xl font-bold mb-6">🏘️ Property Manager</h2>
           <Section title="Main" items={navItems} currentPath={location.pathname} navigate={navigate} />
           <Section title="Management" items={manageItems} currentPath={location.pathname} navigate={navigate} />
         </div>
 
         {/* Logout */}
-        <div className="absolute bottom-4 left-4 right-4">
-          <button onClick={()=>handleLogout()} className="flex items-center gap-2 w-full text-red-600 hover:bg-red-50 px-4 py-2 rounded-md">
+        <div className="p-4 mt-auto border-t border-gray-200">
+          <button 
+            onClick={handleLogout} 
+            className="flex items-center gap-2 w-full text-red-600 hover:bg-red-50 px-4 py-2 rounded-md"
+          >
             <LogOut size={18} />
             Logout
           </button>
