@@ -99,7 +99,7 @@ export default function LoginPage() {
   
           <p className="text-center text-sm text-gray-500 mt-6">
             Don't have an account?{" "}
-            <span className="text-blue-600 cursor-pointer hover:underline">Contact Admin</span>
+            <span onClick={()=>navigate('https://prostechnologies.com/contact/')}  className="text-blue-600 cursor-pointer hover:underline">Contact Admin</span>
           </p>
         </div>
       </div>
