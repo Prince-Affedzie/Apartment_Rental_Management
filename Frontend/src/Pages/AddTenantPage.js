@@ -63,7 +63,7 @@ export default function AddTenantPage() {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { label: 'Tenant Name', name: 'tenantName', type: 'text' },
-                { label: 'Phone Number', name: 'tenantPhone', type: 'text' , placehoder:'+233095093095' },
+                { label: 'Phone Number', name: 'tenantPhone', type: 'text' , placeholder:'+233095093095' },
                 { label: 'Room Description', name: 'roomDescription', type: 'text' },
                 { label: 'Rented Date', name: 'rentedDate', type: 'date' },
                 { label: 'Expiration Date', name: 'expirationDate', type: 'date' },
