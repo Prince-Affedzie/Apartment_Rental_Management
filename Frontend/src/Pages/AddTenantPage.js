@@ -63,7 +63,7 @@ export default function AddTenantPage() {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { label: 'Tenant Name', name: 'tenantName', type: 'text' },
-                { label: 'Phone Number', name: 'tenantPhone', type: 'text' },
+                { label: 'Phone Number', name: 'tenantPhone', type: 'text' , placehoder:'+233095093095' },
                 { label: 'Room Description', name: 'roomDescription', type: 'text' },
                 { label: 'Rented Date', name: 'rentedDate', type: 'date' },
                 { label: 'Expiration Date', name: 'expirationDate', type: 'date' },
@@ -71,7 +71,7 @@ export default function AddTenantPage() {
                 { label: 'Utility Amount', name: 'amountPaidOnUtility', type: 'number' },
                 { label: 'Monthly Price', name: 'monthlyPrice', type: 'number' },
                 { label: 'Total Amount Paid', name: 'totalAmount', type: 'number' }
-              ].map(({ label, name, type }) => (
+              ].map(({ label, name, type,placeholder }) => (
                 <div key={name}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                   <input
@@ -79,6 +79,7 @@ export default function AddTenantPage() {
                     type={type}
                     className="w-full px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
                     value={formData[name]}
+                    placeholder={placeholder}
                     onChange={handleChange}
                     required
                   />
