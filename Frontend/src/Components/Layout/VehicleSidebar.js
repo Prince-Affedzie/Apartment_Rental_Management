@@ -21,7 +21,7 @@ export default function VehicleSidebar({ toggleMobileMenu, mobileMenuOpen }) {
     { label: "Dashboard", icon: <Car size={18} />, path: "/vehicles/dashboard" },
     { label: "Vehicles", icon: <ListChecks size={18} />, path: "/vehicles/list" },
     { label: "Maintenance", icon: <ClipboardList size={18} />, path: "/vehicle/maintainance_list" },
-    { label: "Go To Appartment Dashboard", icon: <Home size={18} />, path: "/apartments/dashboard" },
+    { label: "Go To Apartment Dashboard", icon: <Home size={18} />, path: "/apartments/dashboard" },
    // { label: "Drivers", icon: <User size={18} />, path: "/vehicles/drivers" },
   ];
 
