@@ -44,59 +44,65 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600">
-      <ToastContainer/>
-    { /* <h2 className="text-3xl font-extrabold text-center text-gray-100 mb-6">Property Tracking System</h2>*/}
-      <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md">
-       
-        <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
-          Welcome Back
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 px-4">
+      <ToastContainer />
+      <div className="w-full max-w-md space-y-6">
+        
+        {/* Title - Make it pop and positioned with breathing room */}
+        <h2 className="text-4xl font-bold text-center text-white drop-shadow-md">
+          Property Tracking System
         </h2>
-        <form onSubmit={handleLogin} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-          
-         <div className="relative">
-        <label className="block text-sm font-medium text-gray-700">Password</label>
-          <input
-       name="password"
-        type={showPassword ? "text" : "password"}
-        placeholder="••••••••"
-        className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-         required
-      />
-        <div 
-        onClick={() => setShowPassword(!showPassword)}
-           className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 mt-5"
-             >
-             {showPassword ? <AiFillEyeInvisible size={22} /> : <AiFillEye size={22} />}
-          </div>
-           </div>
-
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition-all"
-          >
-           
-            {loading ? <ProcessingIndicator message="Logging you in..." /> : 'Sign In'}
-          </button>
-        </form>
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Don't have an account?{" "}
-          <span href='prostechnologies.com' className="text-blue-600 cursor-pointer hover:underline">Contact Admin</span>
-        </p>
+  
+        {/* Login Card */}
+        <div className="bg-white shadow-2xl rounded-2xl p-8 w-full">
+          <h2 className="text-2xl font-extrabold text-center text-gray-800 mb-6">
+            Welcome Back
+          </h2>
+  
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+  
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                required
+              />
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 mt-5"
+              >
+                {showPassword ? <AiFillEyeInvisible size={22} /> : <AiFillEye size={22} />}
+              </div>
+            </div>
+  
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition-all"
+            >
+              {loading ? <ProcessingIndicator message="Logging you in..." /> : 'Sign In'}
+            </button>
+          </form>
+  
+          <p className="text-center text-sm text-gray-500 mt-6">
+            Don't have an account?{" "}
+            <span className="text-blue-600 cursor-pointer hover:underline">Contact Admin</span>
+          </p>
+        </div>
       </div>
     </div>
   );
-}
+}  
