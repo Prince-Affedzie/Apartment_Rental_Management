@@ -5,7 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useProfileContext } from '../Context/fetchProfileContext';
 import { getAllUsers, addNewUser, updateUser, removeUser } from '../APIS/APIS';
 import 'react-toastify/dist/ReactToastify.css';
-import { PlusCircle, Trash2, Pencil, X } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function SettingsPage() {
   const { profile, getProfile } = useProfileContext();
@@ -15,6 +15,7 @@ export default function SettingsPage() {
   const [changePassword, setChangePassword] = useState({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
   const [editUser, setEditUser] = useState(null);
   const [activeTab, setActiveTab] = useState('profile');
+  const [showAddUserForm, setShowAddUserForm] = useState(false);
 
   const [settings, setSettings] = useState({
     id: '',
@@ -84,7 +85,8 @@ export default function SettingsPage() {
         if (response.status === 200) {
           setUsers((prev) => [...prev, response.data]);
           setNewUser({ name: '', email: '', phone: '', password: '', confirmPassword: '', role: '' });
-          toast.success('User added');
+          setShowAddUserForm(false);
+          toast.success('User added successfully');
         } else {
           toast.error(response.error || 'An error occurred. Please try again.');
         }
@@ -103,7 +105,7 @@ export default function SettingsPage() {
       if (response.status === 200) {
         const updatedUsers = users.filter((user) => user._id !== Id);
         setUsers(updatedUsers);
-        toast.info('User removed');
+        toast.info('User removed successfully');
       } else {
         toast.error(response.error || 'An error occurred. Please try again.');
       }
@@ -168,7 +170,7 @@ export default function SettingsPage() {
     try {
       const response = await updateUser(editUser);
       if (response.status === 200) {
-        toast.success('User updated');
+        toast.success('User updated successfully');
         setEditUser(null);
         const res = await getAllUsers();
         if (res.status === 200) setUsers(res.data);
@@ -182,26 +184,27 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 overflow-x:hidden">
-      <ToastContainer />
+    <div className="flex min-h-screen bg-gray-50 relative">
+      <ToastContainer position="top-center" autoClose={3000} />
       <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
 
-      <div className="flex-1 flex flex-col">
-        <TopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
-        <main className="flex-1 p-6 mt-7  overflow-x:hidden">
-          <div className="max-w-6xl mx-auto">
+      <div className="flex-1 flex flex-col w-full">
+        <TopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} className="sticky top-0 z-30 bg-white shadow-md" />
+        
+        <main className="flex-1 p-2 sm:p-4 md:p-6 overflow-y-auto">
+          <div className="max-w-4xl mx-auto">
             <div className="bg-white shadow rounded-lg overflow-hidden">
               {/* Tabs */}
-              <div className="flex border-b">
+              <div className="flex border-b overflow-x-auto no-scrollbar">
                 <button 
                   onClick={() => setActiveTab('profile')} 
-                  className={`px-6 py-4 font-medium text-sm ${activeTab === 'profile' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+                  className={`px-4 sm:px-6 py-3 font-medium text-sm whitespace-nowrap ${activeTab === 'profile' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
                 >
                   Profile Settings
                 </button>
                 <button 
                   onClick={() => setActiveTab('users')} 
-                  className={`px-6 py-4 font-medium text-sm ${activeTab === 'users' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
+                  className={`px-4 sm:px-6 py-3 font-medium text-sm whitespace-nowrap ${activeTab === 'users' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}
                 >
                   User Management
                 </button>
@@ -209,35 +212,88 @@ export default function SettingsPage() {
               
               {/* Profile Tab */}
               {activeTab === 'profile' && (
-                <div className="p-6">
-                  <h1 className="text-2xl font-bold mb-6">Your Profile</h1>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="col-span-2">
+                <div className="p-3 sm:p-4 md:p-6">
+                  <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Your Profile</h1>
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="col-span-1 md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                        <input name="name" value={settings.name} onChange={handleChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                        <input 
+                          name="name" 
+                          value={settings.name} 
+                          onChange={handleChange} 
+                          required 
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" name="email" value={settings.email} onChange={handleChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                        <input 
+                          type="email" 
+                          name="email" 
+                          value={settings.email} 
+                          onChange={handleChange} 
+                          required 
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                        <input type="tel" name="phone" value={settings.phone} onChange={handleChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                        <input 
+                          type="tel" 
+                          name="phone" 
+                          value={settings.phone} 
+                          onChange={handleChange} 
+                          required 
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                        />
                       </div>
                     </div>
                     
                     <div className="pt-4 border-t border-gray-200">
-                      <h2 className="text-xl font-bold mb-4">Change Password</h2>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="password" name="currentPassword" value={changePassword.currentPassword} onChange={handlePasswordChange} placeholder="Current Password" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-                        <input type="password" name="newPassword" value={changePassword.newPassword} onChange={handlePasswordChange} placeholder="New Password" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
-                        <input type="password" name="confirmNewPassword" value={changePassword.confirmNewPassword} onChange={handlePasswordChange} placeholder="Confirm New Password" className="px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" />
+                      <h2 className="text-lg font-bold mb-3">Change Password</h2>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 mb-1 md:sr-only">Current Password</label>
+                          <input 
+                            type="password" 
+                            name="currentPassword" 
+                            value={changePassword.currentPassword} 
+                            onChange={handlePasswordChange} 
+                            placeholder="Current Password" 
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 mb-1 md:sr-only">New Password</label>
+                          <input 
+                            type="password" 
+                            name="newPassword" 
+                            value={changePassword.newPassword} 
+                            onChange={handlePasswordChange} 
+                            placeholder="New Password" 
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 mb-1 md:sr-only">Confirm Password</label>
+                          <input 
+                            type="password" 
+                            name="confirmNewPassword" 
+                            value={changePassword.confirmNewPassword} 
+                            onChange={handlePasswordChange} 
+                            placeholder="Confirm New Password" 
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                          />
+                        </div>
                       </div>
                     </div>
                     
-                    <div className="flex justify-end">
-                      <button type="submit" className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <div className="flex justify-end pt-2">
+                      <button 
+                        type="submit" 
+                        className="bg-blue-600 text-white py-2 px-4 sm:px-6 rounded hover:bg-blue-700 text-sm font-medium transition duration-150"
+                      >
                         Save Settings
                       </button>
                     </div>
@@ -247,63 +303,154 @@ export default function SettingsPage() {
               
               {/* Users Tab */}
               {activeTab === 'users' && (
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold">User Management</h2>
-                    <button onClick={() => setNewUser({ name: '', email: '', phone: '', password: '', confirmPassword: '', role: '' })} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-                      <PlusCircle size={18} /> Add User
+                <div className="p-3 sm:p-4 md:p-6">
+                  <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h2 className="text-lg sm:text-xl font-bold">User Management</h2>
+                    <button 
+                      onClick={() => {
+                        setShowAddUserForm(!showAddUserForm);
+                        setNewUser({ name: '', email: '', phone: '', password: '', confirmPassword: '', role: '' });
+                      }} 
+                      className="flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded hover:bg-green-700 text-sm font-medium transition duration-150"
+                    >
+                      {showAddUserForm ? <X size={16} /> : <PlusCircle size={16} />} 
+                      {showAddUserForm ? 'Cancel' : 'Add User'}
                     </button>
                   </div>
                   
-                  {/* Add User Form */}
-                  <div className="bg-gray-50 p-4 rounded-md mb-6">
-                    <h3 className="text-lg font-medium mb-3">Add New User</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <input name="name" value={newUser.name} onChange={handleNewUserChange} placeholder="Name" className="px-4 py-2 border border-gray-300 rounded-md" />
-                      <input name="email" value={newUser.email} onChange={handleNewUserChange} placeholder="Email" className="px-4 py-2 border border-gray-300 rounded-md" />
-                      <input name="phone" value={newUser.phone} onChange={handleNewUserChange} placeholder="Phone" className="px-4 py-2 border border-gray-300 rounded-md" />
-                      <input type="password" name="password" value={newUser.password} onChange={handleNewUserChange} placeholder="Password" className="px-4 py-2 border border-gray-300 rounded-md" />
-                      <input type="password" name="confirmPassword" value={newUser.confirmPassword} onChange={handleNewUserChange} placeholder="Confirm Password" className="px-4 py-2 border border-gray-300 rounded-md" />
-                      <select name="role" value={newUser.role} onChange={handleNewUserChange} className="px-4 py-2 border border-gray-300 rounded-md">
-                        <option value="">Select Role</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Staff">Staff</option>
-                      </select>
+                  {/* Add User Form - Collapsible */}
+                  {showAddUserForm && (
+                    <div className="bg-gray-50 p-3 sm:p-4 rounded-md mb-4 border border-gray-200">
+                      <h3 className="text-md font-medium mb-3">Add New User</h3>
+                      
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Name</label>
+                            <input 
+                              name="name" 
+                              value={newUser.name} 
+                              onChange={handleNewUserChange} 
+                              placeholder="Full Name" 
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
+                            <input 
+                              type="email"
+                              name="email" 
+                              value={newUser.email} 
+                              onChange={handleNewUserChange} 
+                              placeholder="Email Address" 
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Phone</label>
+                            <input 
+                              type="tel"
+                              name="phone" 
+                              value={newUser.phone} 
+                              onChange={handleNewUserChange} 
+                              placeholder="Phone Number" 
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Role</label>
+                            <select 
+                              name="role" 
+                              value={newUser.role} 
+                              onChange={handleNewUserChange} 
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded"
+                            >
+                              <option value="">Select Role</option>
+                              <option value="Admin">Admin</option>
+                              <option value="Manager">Manager</option>
+                              <option value="Staff">Staff</option>
+                            </select>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
+                            <input 
+                              type="password" 
+                              name="password" 
+                              value={newUser.password} 
+                              onChange={handleNewUserChange} 
+                              placeholder="Password" 
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Confirm Password</label>
+                            <input 
+                              type="password" 
+                              name="confirmPassword" 
+                              value={newUser.confirmPassword} 
+                              onChange={handleNewUserChange} 
+                              placeholder="Confirm Password" 
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4">
+                        <button 
+                          onClick={addUser} 
+                          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium transition duration-150"
+                        >
+                          Save User
+                        </button>
+                      </div>
                     </div>
-                    <div className="mt-4">
-                      <button onClick={addUser} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                        Save User
-                      </button>
-                    </div>
-                  </div>
+                  )}
                   
                   {/* User List */}
-                  {users.length > 0 && (
-                    <div className="bg-white rounded-md shadow">
-                      <h3 className="sr-only">User List</h3>
+                  {users.length > 0 ? (
+                    <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
                       <ul className="divide-y divide-gray-200">
                         {users.map((user) => (
-                          <li key={user._id} className="px-4 py-3 flex items-center justify-between hover:bg-gray-50">
-                            <div>
+                          <li key={user._id} className="px-3 py-2.5 sm:px-4 sm:py-3 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-gray-50">
+                            <div className="mb-2 sm:mb-0">
                               <p className="font-medium text-gray-800">{user.name}</p>
-                              <div className="flex items-center text-sm text-gray-600">
-                                <span>{user.email}</span>
-                                <span className="mx-2">•</span>
-                                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded">{user.role}</span>
+                              <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-600 gap-2 sm:gap-0">
+                                <span className="truncate max-w-xs">{user.email}</span>
+                                <span className="hidden sm:inline mx-2">•</span>
+                                <span className="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium">{user.role}</span>
                               </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                              <button onClick={() => setEditUser(user)} className="text-blue-600 hover:text-blue-800 p-1">
-                                <Pencil size={18} />
+                            <div className="flex items-center gap-3 self-end sm:self-auto">
+                              <button 
+                                onClick={() => setEditUser(user)} 
+                                className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50"
+                                aria-label="Edit user"
+                              >
+                                <Pencil size={16} />
                               </button>
-                              <button onClick={() => deleteUser(user._id)} className="text-red-600 hover:text-red-800 p-1" disabled={user.role === 'Admin'}>
-                                <Trash2 size={18} />
+                              <button 
+                                onClick={() => deleteUser(user._id)} 
+                                className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50" 
+                                disabled={user.role === 'Admin'}
+                                aria-label="Delete user"
+                              >
+                                <Trash2 size={16} />
                               </button>
                             </div>
                           </li>
                         ))}
                       </ul>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <p>No users found. Add your first user.</p>
                     </div>
                   )}
                 </div>
@@ -311,30 +458,86 @@ export default function SettingsPage() {
             </div>
           </div>
           
-          {/* Edit Modal */}
+          {/* Edit Modal - Full screen on mobile */}
           {editUser && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-2 sm:p-0">
+              <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-md mx-auto">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-bold">Edit User</h3>
-                  <button onClick={() => setEditUser(null)} className="text-gray-500 hover:text-gray-700">
+                  <h3 className="text-lg font-bold">Edit User</h3>
+                  <button 
+                    onClick={() => setEditUser(null)} 
+                    className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                    aria-label="Close"
+                  >
                     <X size={20} />
                   </button>
                 </div>
-                <div className="grid grid-cols-1 gap-4">
-                  <input name="name" value={editUser.name} onChange={handleEditUserChange} placeholder="Name" className="px-4 py-2 border rounded-md" />
-                  <input name="email" value={editUser.email} onChange={handleEditUserChange} placeholder="Email" className="px-4 py-2 border rounded-md" />
-                  <input name="phone" value={editUser.phone} onChange={handleEditUserChange} placeholder="Phone" className="px-4 py-2 border rounded-md" />
-                  <select name="role" value={editUser.role} onChange={handleEditUserChange} className="px-4 py-2 border rounded-md">
-                    <option value="">Select Role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Staff">Staff</option>
-                  </select>
+                
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Name</label>
+                    <input 
+                      name="name" 
+                      value={editUser.name} 
+                      onChange={handleEditUserChange} 
+                      placeholder="Name" 
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
+                    <input 
+                      type="email"
+                      name="email" 
+                      value={editUser.email} 
+                      onChange={handleEditUserChange} 
+                      placeholder="Email" 
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Phone</label>
+                    <input 
+                      type="tel"
+                      name="phone" 
+                      value={editUser.phone} 
+                      onChange={handleEditUserChange} 
+                      placeholder="Phone" 
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Role</label>
+                    <select 
+                      name="role" 
+                      value={editUser.role} 
+                      onChange={handleEditUserChange} 
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded"
+                    >
+                      <option value="">Select Role</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Manager">Manager</option>
+                      <option value="Staff">Staff</option>
+                    </select>
+                  </div>
                 </div>
+                
                 <div className="mt-6 flex justify-end gap-2">
-                  <button onClick={() => setEditUser(null)} className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Cancel</button>
-                  <button onClick={handleEditSubmit} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Save Changes</button>
+                  <button 
+                    onClick={() => setEditUser(null)} 
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 text-sm font-medium transition duration-150"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleEditSubmit} 
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium transition duration-150"
+                  >
+                    Save Changes
+                  </button>
                 </div>
               </div>
             </div>
