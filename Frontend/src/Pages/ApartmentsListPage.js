@@ -23,6 +23,7 @@ export default function ApartmentsListPage() {
   const [loading, setLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState("All");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedApartment, setSelectedApartment] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
@@ -165,7 +166,13 @@ export default function ApartmentsListPage() {
                     <p className="text-sm text-gray-600 mb-1">{apt.location}</p>
                     <p className="text-sm font-medium text-blue-600 mb-3">GHC {apt.price}/per month</p>
                     <div className="flex justify-between items-center text-sm">
-                      <button className="text-blue-500 hover:underline">Details</button>
+                      <button
+                          onClick={() => setSelectedApartment(apt)}
+                         className="text-blue-500 hover:underline"
+                         >
+                        Details
+                       </button>
+
                       <div className="flex gap-2">
                         <button onClick={() => navigate(`/apartment/edit/${apt._id}`)} className="text-yellow-500 hover:text-yellow-600">Edit</button>
                         <button onClick={() => deleteApart(apt._id)} className="text-red-500 hover:text-red-600">Delete</button>
@@ -188,6 +195,25 @@ export default function ApartmentsListPage() {
             </>
           )}
         </div>
+        {selectedApartment && (
+       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-white p-6 rounded-lg w-[90%] max-w-md shadow-lg relative">
+        <button
+        onClick={() => setSelectedApartment(null)}
+        className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-lg"
+      >
+        ✕
+      </button>
+      <h2 className="text-xl font-bold mb-4">{selectedApartment.title}</h2>
+      <p><strong>Location:</strong> {selectedApartment.location}</p>
+      <p><strong>Price:</strong> GHC {selectedApartment.price} / month</p>
+      <p><strong>Status:</strong> {selectedApartment.status}</p>
+      <p><strong>Description:</strong></p>
+      <p className="text-sm text-gray-600 mt-1">{selectedApartment.description}</p>
+    </div>
+  </div>
+)}
+
       </div>
     </div>
   );
