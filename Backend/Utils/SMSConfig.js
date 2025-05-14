@@ -21,7 +21,7 @@ async function sendSMSToList(phoneNumbers, message) {
         {
           to: phoneNumber,
           message: message,
-          sender_id: "BorteyMan Apartment",
+          sender_id: "BorteyManApt",
         },
         {
           headers: {

@@ -2,7 +2,7 @@ const {Payment} = require('../Models/ApartmentPaymentModel')
 
 const addPayment = async(req,res)=>{
     try{
-        console.log(req.body)
+       
         const {tenant,amountPaid,method,status, Date} =req.body
         const payment = new Payment({
             tenant:tenant,

@@ -11,7 +11,7 @@ const login = async(req,res)=>{
             return res.status(400).json({message:"All Fields Are Required"})
         }
         const user = await User.findOne({email:email})
-        console.log(user)
+        
 
         if(!user){
             return res.status(404).json({message:"User Account not found"})
@@ -22,7 +22,7 @@ const login = async(req,res)=>{
         }
 
         const token = jwt.sign({id:user._id,role:user.role},process.env.token)
-        console.log(token)
+       
         res.cookie('token',token,{httpOnly:true,secure:true,sameSite: 'None'})
 
         res.status(200).json({message:"Login Successful"})
@@ -65,7 +65,7 @@ const addNewUser = async(req,res)=>{
 
 const modifyUser = async(req,res)=>{
     try{
-        console.log(req.body)
+        
         const id = req.body._id || req.body.id
         const {name,email,phone,role,password} = req.body
         const user = await User.findById(id)

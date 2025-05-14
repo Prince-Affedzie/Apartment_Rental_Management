@@ -32,7 +32,7 @@ const editRecord = async(req,res)=>{
     try{
         const {Id} = req.params
         const update = req.body
-        console.log(update)
+        
 
         const record = await Tenants.findById(Id)
         if(!record){
@@ -92,7 +92,7 @@ const getRentRecord = async(req,res)=>{
 
 const addApartment = async(req,res)=>{
     try{
-        console.log(req.body)
+       
        const {title,price,location,description,status} = req.body
        const property = new Apartment({
         title : title,

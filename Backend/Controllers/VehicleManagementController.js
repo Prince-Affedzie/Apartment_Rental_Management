@@ -8,7 +8,7 @@ const addVehicleRecord =async(req,res)=>{
             licenseNum,licenseType, licenseNumExp,maintenanceHist
         } = req.body
 
-        console.log(req.body)
+        
         const record = new Vehicle({
             vehiceType: vehicleType,
             make:make,
@@ -35,8 +35,7 @@ const editVehicleRecord = async(req,res)=>{
     try{
         const {Id} = req.params
         const update = req.body
-        console.log(update)
-        console.log(update)
+        
 
         const record = await Vehicle.findById(Id)
         if(!record){
@@ -102,7 +101,7 @@ const addMaintenanceRecord =async(req,res)=>{
 
         const vehicle  = await Vehicle.findById(vehicleId)
 
-        console.log(req.body)
+       
         const record = new CarMaintenance({
             vehicleId:vehicle._id,
             maintenanceDate: maintenanceDate,
@@ -131,8 +130,7 @@ const editMaintenanceRecord = async(req,res)=>{
     try{
         const {Id} = req.params
         const update = req.body
-        console.log(update)
-        console.log(update)
+        
 
         const record = await CarMaintenance.findById(Id)
         if(!record){

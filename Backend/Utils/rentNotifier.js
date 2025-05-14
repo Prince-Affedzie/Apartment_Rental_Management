@@ -9,7 +9,7 @@ const {User} = require('../Models/Users')
 
 // Schedule: Every day at 8 AM
 // '0 8 * * *'
-cron.schedule('0 17 * * *', async () => {
+cron.schedule('15 17 * * *', async () => {
   console.log(' Running Rent Expiry Check Job...');
 
   try {
