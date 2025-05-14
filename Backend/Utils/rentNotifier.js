@@ -9,18 +9,18 @@ const {User} = require('../Models/Users')
 
 // Schedule: Every day at 8 AM
 // '0 8 * * *'
-cron.schedule('0 8 * * *', async () => {
+cron.schedule('0 17 * * *', async () => {
   console.log(' Running Rent Expiry Check Job...');
 
   try {
     const today = moment();
-    const nextWeek = moment().add(7, 'days').endOf('day');
+   const threeMonthsAhead = moment().add(3, 'months').endOf('day');;
 
     //  Find tenants whose rent expires in the next 7 days
     const tenants = await Tenants.find({
         expirationDate: {
         $gte: today.toDate(),
-        $lte: nextWeek.toDate()
+        $lte: threeMonthsAhead.toDate()
       }
     });
 
@@ -42,7 +42,7 @@ cron.schedule('0 8 * * *', async () => {
     const tenantNames = tenants.map(t => t.tenantName).join(', ');
     const shortMessage = `Reminder: The following tenants' rents are due within the next 3 months: ${tenantNames}.`;
 
-    await sendSMSToList(managerPhones, shortMessage);
+    await sendSMSToList([managerPhones], shortMessage);
 
 
     console.log(`SMS reminders sent to ${tenants.length} tenants.`);
