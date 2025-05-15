@@ -10,6 +10,7 @@ const {User} = require('../Models/Users')
 // Schedule: Every day at 8 AM
 // '0 8 * * *'
 cron.schedule('0 8 1 * * *', async () => {
+  process.env.TZ = 'UTC'
   console.log(' Running Rent Expiry Check Job...');
 
   try {
