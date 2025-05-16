@@ -8,6 +8,11 @@ const {apartmentRouter} = require('./Routes/TenantsRoutes')
 const {paymentRouter} = require('./Routes/PaymentRoute')
 const {vehicleRoute} = require('./Routes/VehicleRoutes')
 require('dotenv').config()
+const startRentNotifier = require('./Utils/rentNotifier');
+
+
+startRentNotifier();
+
 
 const app = express()
 app.use(BodyParser.urlencoded({extended:true}))
@@ -24,13 +29,14 @@ mongoose.connect(process.env.DATABase_URL)
      .then(()=>{
         app.listen(process.env.PORT,()=>{
             console.log(`Listening on Port  ${process.env.PORT}`)
+            startRentNotifier();
         })
      })
      .catch((err)=>{
         console.log(err)
      })
 
-require('./Utils/rentNotifier')
+
 
 app.use('/api',userRouter)
 app.use('/api',apartmentRouter)
