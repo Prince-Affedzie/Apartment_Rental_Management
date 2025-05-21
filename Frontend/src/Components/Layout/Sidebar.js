@@ -19,7 +19,7 @@ export default function Sidebar({ toggleMobileMenu, mobileMenuOpen }) {
     { label: "Dashboard", icon: <Home size={18} />, path: "/apartments/dashboard" },
     { label: "Properties", icon: <Home size={18} />, path: "/apartments/list" },
     { label: "Tenants", icon: <Users size={18} />, path: "/apartments/tenants" },
-    { label: "Payments", icon: <DollarSign size={18} />, path: "/apartments/payment/listt" },
+    { label: "Payments", icon: <DollarSign size={18} />, path: "/apartments/payment/list" },
     { label: "Go To Vehicle Dashboard", icon: <Car size={18} />, path: "/vehicles/dashboard" },
   ];
 
