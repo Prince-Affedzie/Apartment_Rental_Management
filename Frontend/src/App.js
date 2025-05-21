@@ -39,7 +39,7 @@ export default function App() {
        <Route path="/apartments/tenant/edit/:Id" element={<EditTenantPage/>}/>
        <Route path="/apartments/add_property" element={<AddPropertyPage/>}/>
        <Route path="/apartment/edit/:Id" element={<EditApartmentPage/>}/>
-       <Route path="/apartment/payment/list" element={<PaymentsListPage/>}/>
+       <Route path="/apartments/payment/list" element={<PaymentsListPage/>}/>
        <Route path="/apartmnet/add_payment" element={<AddPaymentPage/>}/>
        <Route path="/apartment/edit_payment/:Id" element={<EditPaymentPage/>}/>
 
