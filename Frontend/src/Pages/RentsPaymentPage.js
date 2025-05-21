@@ -135,7 +135,7 @@ export default function PaymentsListPage() {
                 className="px-4 py-2 border-2 border-gray-300 rounded-md w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
-                onClick={() => navigate('/apartmnet/add_payment')}
+                onClick={() => navigate('/apartment/add_payment')}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
               >
                 + Add Payment
@@ -172,10 +172,10 @@ export default function PaymentsListPage() {
                 <tbody>
                   {currentPayments.map((payment) => (
                     <tr key={payment._id} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-4">{payment.tenant.tenantName}</td>
-                      <td className="px-4 py-4 font-medium text-green-700">GHC {payment.amountPaid}</td>
-                      <td className="px-4 py-4 text-gray-600">{new Date(payment.date).toDateString()}</td>
-                      <td className="px-4 py-4 text-gray-600">{payment.method}</td>
+                      <td className="px-4 py-4">{payment.tenant?.tenantName}</td>
+                      <td className="px-4 py-4 font-medium text-green-700">GHC {payment.amountPaid || 0}</td>
+                      <td className="px-4 py-4 text-gray-600">{new Date(payment.date || 'N/A').toDateString()}</td>
+                      <td className="px-4 py-4 text-gray-600">{payment.method || 'N/A'}</td>
                       <td className="px-4 py-4">
                         <span
                           className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -184,7 +184,7 @@ export default function PaymentsListPage() {
                               : 'bg-yellow-100 text-yellow-800'
                           }`}
                         >
-                          {payment.status}
+                          {payment.status || 'Pending'}
                         </span>
                       </td>
                       <td className="px-4 py-4 flex gap-2">
