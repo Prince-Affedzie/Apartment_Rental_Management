@@ -49,7 +49,7 @@ export default function PaymentsListPage() {
   }, []);
 
   const filteredPayments = payments.filter((p) =>
-    p.tenant.tenantName?.toLowerCase().includes(searchTerm.toLowerCase())
+    p?.tenant?.tenantName?.toLowerCase().includes(searchTerm.toLowerCase()) || false
   );
 
   const indexOfLast = currentPage * paymentsPerPage;
