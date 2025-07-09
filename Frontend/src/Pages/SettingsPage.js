@@ -81,12 +81,12 @@ export default function SettingsPage() {
     fetchAllUsers();
   }, []);
 
-  const togglePasswordVisibility = React.useCallback((field) => {
+/*  const togglePasswordVisibility = React.useCallback((field) => {
     setShowPasswords(prev => ({
       ...prev,
       [field]: !prev[field]
     }));
-  }, []);
+  }, []);*/
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -230,34 +230,40 @@ export default function SettingsPage() {
   };
 
   const PasswordInput = React.memo(({ name, value, onChange, placeholder, showKey, className = "" }) => {
-    const handleToggle = React.useCallback((e) => {
-      e.preventDefault();
-      togglePasswordVisibility(showKey);
-    }, [showKey]);
+  const isVisible = showPasswords[showKey];
+  
+  const handleToggle = React.useCallback((e) => {
+    e.preventDefault();
+    setShowPasswords(prev => ({
+      ...prev,
+      [showKey]: !prev[showKey]
+    }));
+  }, [showKey]); // Remove togglePasswordVisibility from dependencies
 
-    return (
-      <div className="relative">
-        <input
-          type={showPasswords[showKey] ? "text" : "password"}
-          name={name}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          className={`w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 ${className}`}
-          autoComplete="off"
-        />
-        <button
-          type="button"
-          onClick={handleToggle}
-          onMouseDown={(e) => e.preventDefault()}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-          tabIndex={-1}
-        >
-          {showPasswords[showKey] ? <EyeOff size={16} /> : <Eye size={16} />}
-        </button>
-      </div>
-    );
-  });
+  return (
+    <div className="relative">
+      <input
+        type={isVisible ? "text" : "password"}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 ${className}`}
+        autoComplete="off"
+      />
+      <button
+        type="button"
+        onClick={handleToggle}
+        onMouseDown={(e) => e.preventDefault()}
+        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+        tabIndex={-1}
+      >
+        {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  );
+});
+
 
   const LoadingButton = ({ onClick, isLoading, children, className = "", disabled = false, ...props }) => (
     <button
