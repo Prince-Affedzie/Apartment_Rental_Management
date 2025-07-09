@@ -5,7 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useProfileContext } from '../Context/fetchProfileContext';
 import { getAllUsers, addNewUser, updateUser, removeUser } from '../APIS/APIS';
 import 'react-toastify/dist/ReactToastify.css';
-import { PlusCircle, Trash2, Pencil, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, X, ChevronDown, ChevronUp, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export default function SettingsPage() {
   const { profile, getProfile } = useProfileContext();
@@ -16,6 +16,26 @@ export default function SettingsPage() {
   const [editUser, setEditUser] = useState(null);
   const [activeTab, setActiveTab] = useState('profile');
   const [showAddUserForm, setShowAddUserForm] = useState(false);
+  
+  // Loading states
+  const [isLoading, setIsLoading] = useState({
+    profile: false,
+    addUser: false,
+    deleteUser: {},
+    editUser: false,
+    fetchUsers: false
+  });
+
+  // Password visibility states
+  const [showPasswords, setShowPasswords] = useState({
+    // Profile password change
+    currentPassword: false,
+    newPassword: false,
+    confirmNewPassword: false,
+    // New user passwords
+    newUserPassword: false,
+    newUserConfirmPassword: false
+  });
 
   const [settings, setSettings] = useState({
     id: '',
@@ -43,6 +63,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const fetchAllUsers = async () => {
+      setIsLoading(prev => ({ ...prev, fetchUsers: true }));
       try {
         const response = await getAllUsers();
         if (response.status === 200) {
@@ -53,10 +74,19 @@ export default function SettingsPage() {
       } catch (err) {
         console.log(err);
         setUsers([]);
+      } finally {
+        setIsLoading(prev => ({ ...prev, fetchUsers: false }));
       }
     };
     fetchAllUsers();
   }, []);
+
+  const togglePasswordVisibility = (field) => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,6 +110,8 @@ export default function SettingsPage() {
         toast.error('Passwords do not match');
         return;
       }
+      
+      setIsLoading(prev => ({ ...prev, addUser: true }));
       try {
         const response = await addNewUser(newUser);
         if (response.status === 200) {
@@ -93,6 +125,8 @@ export default function SettingsPage() {
       } catch (err) {
         const msg = err.response?.data?.message || 'Unexpected error';
         toast.error(msg);
+      } finally {
+        setIsLoading(prev => ({ ...prev, addUser: false }));
       }
     } else {
       toast.error('Please fill all user fields');
@@ -100,6 +134,7 @@ export default function SettingsPage() {
   };
 
   const deleteUser = async (Id) => {
+    setIsLoading(prev => ({ ...prev, deleteUser: { ...prev.deleteUser, [Id]: true } }));
     try {
       const response = await removeUser(Id);
       if (response.status === 200) {
@@ -112,6 +147,11 @@ export default function SettingsPage() {
     } catch (err) {
       const msg = err.response?.data?.message || 'Unexpected error';
       toast.error(msg);
+    } finally {
+      setIsLoading(prev => ({ 
+        ...prev, 
+        deleteUser: { ...prev.deleteUser, [Id]: false } 
+      }));
     }
   };
 
@@ -147,6 +187,7 @@ export default function SettingsPage() {
     }
     updates.id = profile._id;
 
+    setIsLoading(prev => ({ ...prev, profile: true }));
     try {
       const response = await updateUser(updates);
       if (response.status === 200) {
@@ -158,6 +199,8 @@ export default function SettingsPage() {
     } catch (err) {
       const msg = err.response?.data?.message || 'Unexpected error';
       toast.error(msg);
+    } finally {
+      setIsLoading(prev => ({ ...prev, profile: false }));
     }
   };
 
@@ -167,6 +210,7 @@ export default function SettingsPage() {
   };
 
   const handleEditSubmit = async () => {
+    setIsLoading(prev => ({ ...prev, editUser: true }));
     try {
       const response = await updateUser(editUser);
       if (response.status === 200) {
@@ -180,8 +224,42 @@ export default function SettingsPage() {
     } catch (err) {
       const msg = err.response?.data?.message || 'Unexpected error';
       toast.error(msg);
+    } finally {
+      setIsLoading(prev => ({ ...prev, editUser: false }));
     }
   };
+
+  const PasswordInput = ({ name, value, onChange, placeholder, showKey, className = "" }) => (
+    <div className="relative">
+      <input
+        type={showPasswords[showKey] ? "text" : "password"}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 ${className}`}
+      />
+      <button
+        type="button"
+        onClick={() => togglePasswordVisibility(showKey)}
+        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+      >
+        {showPasswords[showKey] ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  );
+
+  const LoadingButton = ({ onClick, isLoading, children, className = "", disabled = false, ...props }) => (
+    <button
+      onClick={onClick}
+      disabled={isLoading || disabled}
+      className={`flex items-center justify-center gap-2 ${className} ${isLoading || disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+      {...props}
+    >
+      {isLoading && <Loader2 size={16} className="animate-spin" />}
+      {children}
+    </button>
+  );
 
   return (
     <div className="flex min-h-screen bg-gray-50 relative">
@@ -255,47 +333,45 @@ export default function SettingsPage() {
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div>
                           <label className="block text-xs font-medium text-gray-500 mb-1 md:sr-only">Current Password</label>
-                          <input 
-                            type="password" 
-                            name="currentPassword" 
-                            value={changePassword.currentPassword} 
-                            onChange={handlePasswordChange} 
-                            placeholder="Current Password" 
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                          <PasswordInput
+                            name="currentPassword"
+                            value={changePassword.currentPassword}
+                            onChange={handlePasswordChange}
+                            placeholder="Current Password"
+                            showKey="currentPassword"
                           />
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-gray-500 mb-1 md:sr-only">New Password</label>
-                          <input 
-                            type="password" 
-                            name="newPassword" 
-                            value={changePassword.newPassword} 
-                            onChange={handlePasswordChange} 
-                            placeholder="New Password" 
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                          <PasswordInput
+                            name="newPassword"
+                            value={changePassword.newPassword}
+                            onChange={handlePasswordChange}
+                            placeholder="New Password"
+                            showKey="newPassword"
                           />
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-gray-500 mb-1 md:sr-only">Confirm Password</label>
-                          <input 
-                            type="password" 
-                            name="confirmNewPassword" 
-                            value={changePassword.confirmNewPassword} 
-                            onChange={handlePasswordChange} 
-                            placeholder="Confirm New Password" 
-                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500" 
+                          <PasswordInput
+                            name="confirmNewPassword"
+                            value={changePassword.confirmNewPassword}
+                            onChange={handlePasswordChange}
+                            placeholder="Confirm New Password"
+                            showKey="confirmNewPassword"
                           />
                         </div>
                       </div>
                     </div>
                     
                     <div className="flex justify-end pt-2">
-                      <button 
-                        type="submit" 
+                      <LoadingButton
+                        type="submit"
+                        isLoading={isLoading.profile}
                         className="bg-blue-600 text-white py-2 px-4 sm:px-6 rounded hover:bg-blue-700 text-sm font-medium transition duration-150"
                       >
-                        Save Settings
-                      </button>
+                        {isLoading.profile ? 'Saving...' : 'Save Settings'}
+                      </LoadingButton>
                     </div>
                   </form>
                 </div>
@@ -379,42 +455,46 @@ export default function SettingsPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
                             <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
-                            <input 
-                              type="password" 
-                              name="password" 
-                              value={newUser.password} 
-                              onChange={handleNewUserChange} 
-                              placeholder="Password" 
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                            <PasswordInput
+                              name="password"
+                              value={newUser.password}
+                              onChange={handleNewUserChange}
+                              placeholder="Password"
+                              showKey="newUserPassword"
                             />
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-gray-500 mb-1">Confirm Password</label>
-                            <input 
-                              type="password" 
-                              name="confirmPassword" 
-                              value={newUser.confirmPassword} 
-                              onChange={handleNewUserChange} 
-                              placeholder="Confirm Password" 
-                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded" 
+                            <PasswordInput
+                              name="confirmPassword"
+                              value={newUser.confirmPassword}
+                              onChange={handleNewUserChange}
+                              placeholder="Confirm Password"
+                              showKey="newUserConfirmPassword"
                             />
                           </div>
                         </div>
                       </div>
                       
                       <div className="mt-4">
-                        <button 
-                          onClick={addUser} 
+                        <LoadingButton
+                          onClick={addUser}
+                          isLoading={isLoading.addUser}
                           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium transition duration-150"
                         >
-                          Save User
-                        </button>
+                          {isLoading.addUser ? 'Adding User...' : 'Save User'}
+                        </LoadingButton>
                       </div>
                     </div>
                   )}
                   
                   {/* User List */}
-                  {users.length > 0 ? (
+                  {isLoading.fetchUsers ? (
+                    <div className="flex justify-center items-center py-8">
+                      <Loader2 size={24} className="animate-spin text-blue-600" />
+                      <span className="ml-2 text-gray-600">Loading users...</span>
+                    </div>
+                  ) : users.length > 0 ? (
                     <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
                       <ul className="divide-y divide-gray-200">
                         {users.map((user) => (
@@ -435,14 +515,19 @@ export default function SettingsPage() {
                               >
                                 <Pencil size={16} />
                               </button>
-                              <button 
-                                onClick={() => deleteUser(user._id)} 
-                                className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50" 
+                              <LoadingButton
+                                onClick={() => deleteUser(user._id)}
+                                isLoading={isLoading.deleteUser[user._id]}
                                 disabled={user.role === 'Admin'}
+                                className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50"
                                 aria-label="Delete user"
                               >
-                                <Trash2 size={16} />
-                              </button>
+                                {isLoading.deleteUser[user._id] ? (
+                                  <Loader2 size={16} className="animate-spin" />
+                                ) : (
+                                  <Trash2 size={16} />
+                                )}
+                              </LoadingButton>
                             </div>
                           </li>
                         ))}
@@ -532,12 +617,13 @@ export default function SettingsPage() {
                   >
                     Cancel
                   </button>
-                  <button 
-                    onClick={handleEditSubmit} 
+                  <LoadingButton
+                    onClick={handleEditSubmit}
+                    isLoading={isLoading.editUser}
                     className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm font-medium transition duration-150"
                   >
-                    Save Changes
-                  </button>
+                    {isLoading.editUser ? 'Saving...' : 'Save Changes'}
+                  </LoadingButton>
                 </div>
               </div>
             </div>
