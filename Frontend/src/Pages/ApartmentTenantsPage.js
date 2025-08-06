@@ -207,7 +207,7 @@ const ApartmentTenantsPage = () => {
                                 >
                                   <FiEdit2 className="h-5 w-5" />
                                 </Link>
-                                <button
+                                {/*<button
                                   onClick={() => {
                                     if (window.confirm(`Delete ${tenant.tenantName}?`)) {
                                       // Handle delete functionality
@@ -217,7 +217,7 @@ const ApartmentTenantsPage = () => {
                                   title="Delete tenant"
                                 >
                                   <FiTrash2 className="h-5 w-5" />
-                                </button>
+                                </button>*/}
                               </div>
                             </td>
                           </tr>
@@ -247,7 +247,7 @@ const ApartmentTenantsPage = () => {
                             >
                               <FiEdit2 className="h-5 w-5" />
                             </Link>
-                            <button
+                            {/*<button
                               onClick={() => {
                                 if (window.confirm(`Delete ${tenant.tenantName}?`)) {
                                   // Handle delete functionality
@@ -256,7 +256,7 @@ const ApartmentTenantsPage = () => {
                               className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                             >
                               <FiTrash2 className="h-5 w-5" />
-                            </button>
+                            </button>*/}
                           </div>
                         </div>
                         <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
