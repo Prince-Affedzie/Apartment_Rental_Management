@@ -14,6 +14,10 @@ const tenantsSchema = new schema({
         type: String,
         required:true
     },
+    apartment:{
+       type: mongoose.Schema.Types.ObjectId,
+       ref: "Apartment"
+    },
     rentedDate:{
         type: Date
     },

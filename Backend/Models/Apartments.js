@@ -14,6 +14,10 @@ const apartmentShema = new schema({
     description:{
         type:String
     },
+    tenants:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Tenants'
+    }],
     status:{
         type:String,
         enum:['Occupied','Available','Maintenance']

@@ -1,7 +1,7 @@
 const express = require('express')
 const {verifyToken} = require('../middleware/Authentication')
 const  {addRentRecord,editRecord,deleteRecord,getRentRecords,getRentRecord,
-    addApartment,fetchApartmentProperties,editProperty,deleteProperty,getApartment
+    addApartment,fetchApartmentProperties,editProperty,deleteProperty,getApartment,getApartmentTenants
 } = require('../Controllers/TenantController')
 const apartmentRouter = express.Router()
 
@@ -14,6 +14,7 @@ apartmentRouter.post('/add/apartment_property',addApartment)
 apartmentRouter.put('/edit/apartment_property/:Id',editProperty)
 apartmentRouter.get('/get/apartment_properties',fetchApartmentProperties)
 apartmentRouter.get('/get/apartment_property/:Id',getApartment)
+apartmentRouter.get('/get/:apartmentId/apartment_property_tenants',getApartmentTenants)
 apartmentRouter.delete('/delete/apartment_property/:Id',deleteProperty )
 
 module.exports = {apartmentRouter}

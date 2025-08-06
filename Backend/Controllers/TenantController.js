@@ -4,13 +4,14 @@ const { Apartment } = require ('../Models/Apartments')
 const addRentRecord =async(req,res)=>{
     try{
         const {tenantName,tenantPhone,roomDescription,rentedDate,expirationDate,noOfMonthsRented,amountPaidOnUtility,
-            monthlyPrice,totalAmount,status
+            monthlyPrice,totalAmount,status,apartment
         } = req.body
 
         const record = new Tenants({
             tenantName:tenantName,
             tenantPhone:tenantPhone,
             roomDescription:roomDescription,
+            apartment:apartment,
             rentedDate:rentedDate,
             expirationDate:expirationDate,
             noOfMonthsRented:noOfMonthsRented,
@@ -19,6 +20,11 @@ const addRentRecord =async(req,res)=>{
             totalAmount:totalAmount,
             status:status
         })
+        if(apartment){
+           await Apartment.findByIdAndUpdate(apartment,
+                { $push: { tenants: record._id } }, 
+                { new: true } )
+               }
         await record.save()
         res.status(200).json({message:"Record Created Successfully"})
 
@@ -28,25 +34,48 @@ const addRentRecord =async(req,res)=>{
     }
 }
 
-const editRecord = async(req,res)=>{
-    try{
-        const {Id} = req.params
-        const update = req.body
-        
+const editRecord = async (req, res) => {
+    try {
+        const { Id } = req.params;
+        const update = req.body;
 
-        const record = await Tenants.findById(Id)
-        if(!record){
-            return res.status(404).json({message:'No Record Found'})
+        //  Find the tenant record to be updated
+        const record = await Tenants.findById(Id);
+        if (!record) {
+            return res.status(404).json({ message: 'No Record Found' });
         }
-        Object.assign(record,update)
-        await record.save()
-        res.status(200).json({message: "Record Updated Successfully"})
 
-    }catch(err){
-        console.log(err)
-        res.status(500).json({message:"Internal Server Error"})
+        //  Handle the case where the tenant is moving to a new apartment
+        const oldApartmentId = record.apartment ? record.apartment.toString() : null;
+        const newApartmentId = req.body.apartment ? req.body.apartment.toString() : null;
+
+        if (newApartmentId && newApartmentId !== oldApartmentId) {
+            // Remove the tenant from the old apartment's list
+            if (oldApartmentId) {
+                await Apartment.findByIdAndUpdate(oldApartmentId, {
+                    $pull: { tenants: record._id } // $pull removes a value from an array
+                });
+            }
+
+            // Add the tenant to the new apartment's list
+            await Apartment.findByIdAndUpdate(newApartmentId, {
+                $push: { tenants: record._id } // $push adds a value to an array
+            });
+        }
+        
+        // 3. Apply all the other updates to the tenant record itself
+        Object.assign(record, update);
+
+        // 4. Save the updated tenant record
+        await record.save();
+
+        res.status(200).json({ message: "Record Updated Successfully" });
+    } catch (err) {
+        console.error(err); // Use console.error for better visibility in logs
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
+
 
 const deleteRecord = async(req,res)=>{
     try{
@@ -66,7 +95,7 @@ const deleteRecord = async(req,res)=>{
 
 const getRentRecords = async(req,res)=>{
     try{
-        const rents = await Tenants.find().sort({createdAt:-1})
+        const rents = await Tenants.find().populate('apartment').sort({createdAt:-1})
         res.status(200).json(rents)
 
     }catch(err){
@@ -78,7 +107,7 @@ const getRentRecords = async(req,res)=>{
 const getRentRecord = async(req,res)=>{
     try{
         const {Id} = req.params
-        const rent = await Tenants.findById(Id)
+        const rent = await Tenants.findById(Id).populate('apartment')
         if(!rent){
             return res.status(404).json({message:"No Rent Found"})
         }
@@ -92,16 +121,24 @@ const getRentRecord = async(req,res)=>{
 
 const addApartment = async(req,res)=>{
     try{
-       
-       const {title,price,location,description,status} = req.body
+       console.log(req.body)
+       const {title,price,location,description,status ,tenants} = req.body
        const property = new Apartment({
         title : title,
         price : price,
         location: location,
         description:description,
+        tenants: tenants || [],
         status: status
 
        })
+      if (tenants.length > 0) {
+    
+    await Tenants.updateMany(
+        { _id: { $in: tenants } }, 
+        { $set: { apartment: property._id } } 
+    );
+}
        await property.save()
        res.status(200).json({message:"Apartment Added Successfully"})
     }catch(err){
@@ -112,7 +149,7 @@ const addApartment = async(req,res)=>{
 
 const fetchApartmentProperties = async(req,res)=>{
     try{
-        const apartments = await Apartment.find().sort({createdAt:-1})
+        const apartments = await Apartment.find().populate('tenants').sort({createdAt:-1})
         res.status(200).json(apartments)
 
     }catch(err){
@@ -121,24 +158,65 @@ const fetchApartmentProperties = async(req,res)=>{
     }
 }
 
-const editProperty = async(req,res) => {
-    try{
-        const {Id} = req.params
-        const update = req.body
-        const property = await Apartment.findById(Id)
-        if(!property){
-            return res.status(404).json({message:"Property Not Found"})
-        }
-        Object.assign(property,update)
-        await property.save()
-        res.status(200).json({message:'Property Updated Successfully'})
+const editProperty = async (req, res) => {
+    try {
+        const { Id } = req.params;
+        const { title, location, price, description, status, tenants } = req.body;
 
-    }catch(err){
-        console.log(err)
-        res.status(500).json({message:"Internal Server Error"})
+        console.log(req.body);
+
+        //  Find the property and check for existence
+        const property = await Apartment.findById(Id);
+        if (!property) {
+            return res.status(404).json({ message: "Property Not Found" });
+        }
+
+        // Store the original tenants array for comparison
+        const originalTenants = property.tenants.map(t => t.toString()); // Convert to strings for easy comparison
+        const newTenants = tenants ? tenants.map(t => t.toString()) : [];
+
+        //  Identify tenants to be removed and added
+        const tenantsToRemove = originalTenants.filter(tenantId => !newTenants.includes(tenantId));
+        const tenantsToAdd = newTenants.filter(tenantId => !originalTenants.includes(tenantId));
+
+        //  Update the tenant records in the Tenants collection
+        
+        // Remove tenants from the old apartment (set their apartment field to null)
+        if (tenantsToRemove.length > 0) {
+            await Tenants.updateMany(
+                { _id: { $in: tenantsToRemove } },
+                { $set: { apartment: null } }
+            );
+        }
+
+        // Add the new tenants to this apartment
+        if (tenantsToAdd.length > 0) {
+            await Tenants.updateMany(
+                { _id: { $in: tenantsToAdd } },
+                { $set: { apartment: property._id } }
+            );
+        }
+
+        // 4. Update the apartment document itself
+        // Note: Using `Object.assign` is a great way to handle dynamic updates
+        Object.assign(property, {
+            title: title || property.title,
+            location: location || property.location,
+            price: price || property.price,
+            description: description || property.description,
+            status: status || property.status,
+            tenants: newTenants // Directly set the new list of tenant IDs
+        });
+
+        //  Save the updated property document
+        await property.save();
+
+        res.status(200).json({ message: 'Property Updated Successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 }
-
 const deleteProperty = async(req,res)=>{
     try{
         const {Id} =req.params
@@ -155,20 +233,35 @@ const deleteProperty = async(req,res)=>{
     }
 }
 
-const getApartment = async(req,res)=>{
+const getApartment = async(req,res)=>{     
+    try{         
+        const {Id} = req.params         
+        const apartment = await Apartment.findById(Id).populate('tenants', 'tenantName tenantPhone tenantEmail')
+        console.log(apartment)         
+        if(!apartment){             
+            return res.status(400).json({message:"No Apartment Found"})         
+        }         
+        res.status(200).json(apartment)      
+    }catch(err){         
+        console.log(err)         
+        res.status(500).json({message:"Server Error - Could not fetch apartment"})     
+    } 
+}
+
+const getApartmentTenants = async(req,res)=>{
+    const {apartmentId} = req.params
+    
     try{
-        const {Id} = req.params
-        const apartment = await Apartment.findById(Id)
-        if(!apartment){
-            return res.status(400).json({message:"No Apartment Found"})
-        }
-        res.status(200).json( apartment)
+        const tenants = await Apartment.findById(apartmentId).populate('tenants')
+        console.log(tenants.tenants)
+        res.status(200).json(tenants.tenants)
+
 
     }catch(err){
         console.log(err)
-        res.status(500).json({message:"No Apartment Found"})
+        res.status(500).json({message:"Internal Server Error"})
     }
 }
 
 module.exports = {addRentRecord,editRecord,deleteRecord,getRentRecords,getRentRecord,addApartment,
-    fetchApartmentProperties,editProperty,deleteProperty ,getApartment}
+    fetchApartmentProperties,editProperty,deleteProperty ,getApartment,getApartmentTenants}

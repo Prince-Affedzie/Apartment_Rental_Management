@@ -3,6 +3,10 @@ const BodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const { Apartment } = require ('./Models/Apartments')
+const {Tenants} = require('./Models/Tenants')
+
+
 const {userRouter} = require('./Routes/UserRoutes')
 const {apartmentRouter} = require('./Routes/TenantsRoutes')
 const {paymentRouter} = require('./Routes/PaymentRoute')
@@ -14,6 +18,19 @@ const startRentNotifier = require('./Utils/rentNotifier');
 startRentNotifier();
 
 
+ const runMigrations = async () => {
+    try {
+      await Tenants.updateMany(
+        {}, 
+        { $set: {apartment: null } }
+      );
+      console.log('All users updated with default verification status');
+    } catch (err) {
+      console.error('Error during migration:', err);
+    }
+  };
+
+
 const app = express()
 app.use(BodyParser.urlencoded({extended:true}))
 app.use(cookieParser())
@@ -21,14 +38,16 @@ app.use(express.json())
 app.set('trust proxy', 1);
 
 app.use(cors({
-    origin:"https://www.trackingproperty.com",
+    origin: "https://www.trackingproperty.com",
     credentials:true
+    //https://orange-winner-q7vw64jp5gjq246qw-3000.app.github.dev/
 }))
 app.use('/uploads',express.static('uploads'))
 mongoose.connect(process.env.DATABase_URL)
      .then(()=>{
         app.listen(process.env.PORT,()=>{
             console.log(`Listening on Port  ${process.env.PORT}`)
+             
             startRentNotifier();
         })
      })

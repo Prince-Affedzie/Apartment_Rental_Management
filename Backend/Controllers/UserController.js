@@ -3,6 +3,41 @@ const bcrypt = require('bcryptjs')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
 
+const signUp = async(req,res)=>{
+    try{
+        const {email,password,name,role} = req.body
+        const isEmail = validator.isEmail(email)
+       
+        if(!isEmail){
+            return res.status(400).json({message:"Invalid Email"})
+        }
+        const userExist = await User.findOne({email:email})
+        if (userExist){
+            return res.status(400).json({message: "User Already Exists"})
+        }
+
+        const hashedPassword = await bcrypt.hash(password,10);
+
+        const user = new User({
+            name,
+            email,
+            password:hashedPassword,
+            role
+        })
+
+        await user.save()
+        const token = jwt.sign({id:user._id,role:user.role},process.env.token)
+       
+        res.cookie('token',token,{httpOnly:true,secure:true,sameSite: 'None'})
+        res.status(200).json({message:"User Created Successfully"});
+
+
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message:"Internal Server Error"})
+    }
+}
+
 const login = async(req,res)=>{
     try{
         console.log(req.body)
@@ -147,4 +182,4 @@ const logout = async(req,res)=>{
     }
 }
 
-module.exports = {login,addNewUser,modifyUser,removeUser,getPersonalInfo,getUsers,logout}
+module.exports = {signUp,login,addNewUser,modifyUser,removeUser,getPersonalInfo,getUsers,logout}
