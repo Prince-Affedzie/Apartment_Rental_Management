@@ -72,7 +72,7 @@ export default function EditMaintenancePage() {
   if (loading || !record) return <div className="p-6">Loading...</div>;
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50">
       <ToastContainer />
       <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
       <div className="flex-1">

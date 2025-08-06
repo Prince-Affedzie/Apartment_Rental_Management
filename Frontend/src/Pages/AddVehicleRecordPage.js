@@ -85,7 +85,7 @@ export default function AddVehiclePage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 relative">
+    <div className="flex h-screen bg-gray-50 relative">
       <ToastContainer position="top-center" autoClose={3000} />
       <VehicleSidebar
         toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}

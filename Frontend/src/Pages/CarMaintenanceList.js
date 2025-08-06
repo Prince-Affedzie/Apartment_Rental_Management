@@ -81,7 +81,7 @@ export default function MaintenanceListPage() {
   const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50 overflow-x-hidden">
       <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
       <div className="flex-1">
         <TopNav  toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>

@@ -1,5 +1,5 @@
 import axios from "axios"
-
+//https://orange-winner-q7vw64jp5gjq246qw-5000.app.github.dev/
 const API = axios.create({baseURL:'https://rental-vehicle-app-hfvqh.ondigitalocean.app/',withCredentials:true})
 export const login =(data)=> API.post("/api/login",data)
 export const fetchProfileInfo = ()=>API.get('/api/view/profile_info')
@@ -25,6 +25,7 @@ export const editPayment = (Id,data)=>API.put(`/api/apartment/edit_payment/${Id}
 export const deletePayment = (Id)=>API.delete(`/api/apartment/delete_payment/${Id}`)
 export const getAllPayments = ()=>API.get('/api/apartment/all_payments')
 export const getPayment =(Id)=>API.get(`/api/apartment/get_payment/${Id}`)
+export const getTenantsByApartment=(apartmentId)=>API.get(`/api/get/${apartmentId}/apartment_property_tenants`)
 
 // Vehicles
 export const getVehicles =()=>API.get('/api/get/vehicle_records')

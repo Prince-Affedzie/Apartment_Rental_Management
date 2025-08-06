@@ -19,6 +19,7 @@ import EditVehiclePage from "./Pages/EditVehiclePage";
 import AddMaintenancePage from "./Pages/CarMaintenanceForms";
 import MaintenanceListPage from "./Pages/CarMaintenanceList";
 import EditMaintenancePage from "./Pages/EditCarMaintenance";
+import ApartmentTenantsPage from "./Pages/ApartmentTenantsPage";
 import SettingsPage from "./Pages/SettingsPage";
 import ProtectedRoute from "./Utils/ProtectedRoute";
 //import CarRentalDashboard from "./layouts/CarRentalDashboard";
@@ -38,6 +39,7 @@ export default function App() {
        <Route path="/apartments/add_tenant_record" element={<AddTenantPage/>}/>
        <Route path="/apartments/tenant/edit/:Id" element={<EditTenantPage/>}/>
        <Route path="/apartments/add_property" element={<AddPropertyPage/>}/>
+       <Route path="/apartments/:apartmentId/tenants" element={<ApartmentTenantsPage/>}/>
        <Route path="/apartment/edit/:Id" element={<EditApartmentPage/>}/>
        <Route path="/apartments/payment/list" element={<PaymentsListPage/>}/>
        <Route path="/apartment/add_payment" element={<AddPaymentPage/>}/>

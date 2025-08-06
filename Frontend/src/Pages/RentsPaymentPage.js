@@ -117,7 +117,7 @@ export default function PaymentsListPage() {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-x-hidden">
       <Sidebar toggleMobileMenu={toggleMobileMenu} mobileMenuOpen={mobileMenuOpen} />
 
       <div className="flex-1 flex flex-col overflow-hidden">

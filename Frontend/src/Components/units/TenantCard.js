@@ -7,9 +7,9 @@ export default function TenantCard({ tenant }) {
           className="w-14 h-14 rounded-full object-cover"
         />
         <div className="flex-1">
-          <h3 className="text-lg font-semibold">{tenant.name}</h3>
+          <h3 className="text-lg font-semibold">{tenant.tenantName}</h3>
           <p className="text-sm text-gray-500">{tenant.unit}</p>
-          <p className="text-sm text-gray-500">{tenant.phone}</p>
+          <p className="text-sm text-gray-500">{tenant.tenantPhone}</p>
           <p className="text-sm text-gray-500">{tenant.email}</p>
         </div>
         <span

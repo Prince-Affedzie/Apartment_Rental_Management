@@ -66,7 +66,7 @@ function TenantTable({ tenants, onDelete, currentPage, totalPages, onPageChange 
             <tr>
               <th className="px-3 py-2 font-semibold">Name</th>
               <th className="px-3 py-2 font-semibold">Phone</th>
-              <th className="px-3 py-2 font-semibold">Room</th>
+              <th className="px-3 py-2 font-semibold">Apartment</th>
               <th className="px-3 py-2 font-semibold">Start</th>
               <th className="px-3 py-2 font-semibold">End</th>
               <th className="px-3 py-2 font-semibold">Mths</th>
@@ -81,7 +81,7 @@ function TenantTable({ tenants, onDelete, currentPage, totalPages, onPageChange 
               <tr key={tenant._id} className="border-b hover:bg-gray-50">
                 <td className="px-3 py-4 max-w-[160px] truncate">{tenant.tenantName}</td>
                 <td className="px-3 py-4 whitespace-nowrap">{tenant.tenantPhone}</td>
-                <td className="px-3 py-4 whitespace-nowrap">{tenant.roomDescription}</td>
+                <td className="px-3 py-4 whitespace-nowrap max-w-[160px] truncate">{tenant.apartment?.title || 'N/A'}</td>
                 <td className="px-3 py-4 whitespace-nowrap">{new Date(tenant.rentedDate).toLocaleDateString()}</td>
                 <td className="px-3 py-4 whitespace-nowrap">{new Date(tenant.expirationDate).toLocaleDateString()}</td>
                 <td className="px-3 py-4 text-center">{tenant.noOfMonthsRented}</td>
@@ -184,7 +184,7 @@ export default function TenantManagementPage() {
   const paginatedTenants = tenantList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar toggleMobileMenu={toggleMobileMenu} mobileMenuOpen={mobileMenuOpen} />
 
       <div className="flex flex-col flex-1 overflow-hidden">

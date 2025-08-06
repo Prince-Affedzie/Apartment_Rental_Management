@@ -21,6 +21,7 @@ export default function Sidebar({ toggleMobileMenu, mobileMenuOpen }) {
     { label: "Tenants", icon: <Users size={18} />, path: "/apartments/tenants" },
     { label: "Payments", icon: <DollarSign size={18} />, path: "/apartments/payment/list" },
     { label: "Go To Vehicle Dashboard", icon: <Car size={18} />, path: "/vehicles/dashboard" },
+    { label: "Settings", icon: <Settings size={18} />, path: "/settings" },
   ];
 
   const manageItems = [
@@ -55,13 +56,13 @@ export default function Sidebar({ toggleMobileMenu, mobileMenuOpen }) {
         </div>
 
         <div className="p-4 flex-grow overflow-y-auto">
-          <h2 className="text-xl font-bold mb-6">🏘️ Property Manager</h2>
+          <h2 className="text-xl font-bold mb-6">Property Manager</h2>
           <Section title="Main" items={navItems} currentPath={location.pathname} navigate={navigate} />
-          <Section title="Management" items={manageItems} currentPath={location.pathname} navigate={navigate} />
+          {/*<Section title="Management" items={manageItems} currentPath={location.pathname} navigate={navigate} />*/}
         </div>
 
         {/* Logout */}
-        <div className="p-4 mt-auto border-t border-gray-200">
+        <div className="p-3 mt-15 border-t border-gray-200">
           <button 
             onClick={handleLogout} 
             className="flex items-center gap-2 w-full text-red-600 hover:bg-red-50 px-4 py-2 rounded-md"
