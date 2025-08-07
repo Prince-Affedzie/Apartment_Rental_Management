@@ -30,7 +30,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/settings" element={<ProtectedRoute><SettingsPage/></ProtectedRoute>}/>
+        <Route path="/settings" element={<SettingsPage/>}/>
 
         {/* Apartment Dashboard Routes */}
        <Route path="/apartments/dashboard" element={< AppointmentDashboard />} />
