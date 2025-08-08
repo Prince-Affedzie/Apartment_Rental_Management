@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import VehicleSidebar from '../Components/Layout/VehicleSidebar';
 import TopNav from '../Components/Layout/TopNav';
 import { ToastContainer, toast } from 'react-toastify';
@@ -6,6 +6,59 @@ import { useProfileContext } from '../Context/fetchProfileContext';
 import { getAllUsers, addNewUser, updateUser, removeUser } from '../APIS/APIS';
 import 'react-toastify/dist/ReactToastify.css';
 import { PlusCircle, Trash2, Pencil, X, ChevronDown, ChevronUp, Eye, EyeOff, Loader2 } from 'lucide-react';
+
+// Move PasswordInput outside and memoize properly
+const PasswordInput = React.memo(({ name, value, onChange, placeholder, showKey, className = "", showPasswords, setShowPasswords }) => {
+  const isVisible = showPasswords[showKey];
+  
+  const handleToggle = useCallback((e) => {
+    e.preventDefault();
+    setShowPasswords(prev => ({
+      ...prev,
+      [showKey]: !prev[showKey]
+    }));
+  }, [showKey, setShowPasswords]);
+
+  return (
+    <div className="relative">
+      <input
+        type={isVisible ? "text" : "password"}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 ${className}`}
+        autoComplete="off"
+      />
+      <button
+        type="button"
+        onClick={handleToggle}
+        onMouseDown={(e) => e.preventDefault()}
+        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+        tabIndex={-1}
+      >
+        {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  );
+});
+
+PasswordInput.displayName = 'PasswordInput';
+
+// Move LoadingButton outside as well
+const LoadingButton = React.memo(({ onClick, isLoading, children, className = "", disabled = false, ...props }) => (
+  <button
+    onClick={onClick}
+    disabled={isLoading || disabled}
+    className={`flex items-center justify-center gap-2 ${className} ${isLoading || disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+    {...props}
+  >
+    {isLoading && <Loader2 size={16} className="animate-spin" />}
+    {children}
+  </button>
+));
+
+LoadingButton.displayName = 'LoadingButton';
 
 export default function SettingsPage() {
   const { profile, getProfile } = useProfileContext();
@@ -81,27 +134,31 @@ export default function SettingsPage() {
     fetchAllUsers();
   }, []);
 
-/*  const togglePasswordVisibility = React.useCallback((field) => {
-    setShowPasswords(prev => ({
-      ...prev,
-      [field]: !prev[field]
-    }));
-  }, []);*/
-
-  const handleChange = (e) => {
+  // Memoize callback functions to prevent unnecessary re-renders
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setSettings((prev) => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const handleNewUserChange = (e) => {
+  const handleNewUserChange = useCallback((e) => {
     const { name, value } = e.target;
     setNewUser((prev) => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = useCallback((e) => {
     const { name, value } = e.target;
     setChangePassword((prev) => ({ ...prev, [name]: value }));
-  };
+  }, []);
+
+  const handleEditUserChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setEditUser((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  // Memoize setShowPasswords to prevent PasswordInput re-renders
+  const memoizedSetShowPasswords = useCallback((updater) => {
+    setShowPasswords(updater);
+  }, []);
 
   const addUser = async () => {
     const { name, email, phone, password, confirmPassword, role } = newUser;
@@ -204,11 +261,6 @@ export default function SettingsPage() {
     }
   };
 
-  const handleEditUserChange = (e) => {
-    const { name, value } = e.target;
-    setEditUser((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleEditSubmit = async () => {
     setIsLoading(prev => ({ ...prev, editUser: true }));
     try {
@@ -228,54 +280,6 @@ export default function SettingsPage() {
       setIsLoading(prev => ({ ...prev, editUser: false }));
     }
   };
-
-  const PasswordInput = React.memo(({ name, value, onChange, placeholder, showKey, className = "" }) => {
-  const isVisible = showPasswords[showKey];
-  
-  const handleToggle = React.useCallback((e) => {
-    e.preventDefault();
-    setShowPasswords(prev => ({
-      ...prev,
-      [showKey]: !prev[showKey]
-    }));
-  }, [showKey]); // Remove togglePasswordVisibility from dependencies
-
-  return (
-    <div className="relative">
-      <input
-        type={isVisible ? "text" : "password"}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`w-full px-3 py-2 pr-10 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 ${className}`}
-        autoComplete="off"
-      />
-      <button
-        type="button"
-        onClick={handleToggle}
-        onMouseDown={(e) => e.preventDefault()}
-        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-        tabIndex={-1}
-      >
-        {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
-      </button>
-    </div>
-  );
-});
-
-
-  const LoadingButton = ({ onClick, isLoading, children, className = "", disabled = false, ...props }) => (
-    <button
-      onClick={onClick}
-      disabled={isLoading || disabled}
-      className={`flex items-center justify-center gap-2 ${className} ${isLoading || disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-      {...props}
-    >
-      {isLoading && <Loader2 size={16} className="animate-spin" />}
-      {children}
-    </button>
-  );
 
   return (
     <div className="flex h-screen bg-gray-50 relative">
@@ -355,6 +359,8 @@ export default function SettingsPage() {
                             onChange={handlePasswordChange}
                             placeholder="Current Password"
                             showKey="currentPassword"
+                            showPasswords={showPasswords}
+                            setShowPasswords={memoizedSetShowPasswords}
                           />
                         </div>
                         <div>
@@ -365,6 +371,8 @@ export default function SettingsPage() {
                             onChange={handlePasswordChange}
                             placeholder="New Password"
                             showKey="newPassword"
+                            showPasswords={showPasswords}
+                            setShowPasswords={memoizedSetShowPasswords}
                           />
                         </div>
                         <div>
@@ -375,6 +383,8 @@ export default function SettingsPage() {
                             onChange={handlePasswordChange}
                             placeholder="Confirm New Password"
                             showKey="confirmNewPassword"
+                            showPasswords={showPasswords}
+                            setShowPasswords={memoizedSetShowPasswords}
                           />
                         </div>
                       </div>
@@ -477,6 +487,8 @@ export default function SettingsPage() {
                               onChange={handleNewUserChange}
                               placeholder="Password"
                               showKey="newUserPassword"
+                              showPasswords={showPasswords}
+                              setShowPasswords={memoizedSetShowPasswords}
                             />
                           </div>
                           <div>
@@ -487,6 +499,8 @@ export default function SettingsPage() {
                               onChange={handleNewUserChange}
                               placeholder="Confirm Password"
                               showKey="newUserConfirmPassword"
+                              showPasswords={showPasswords}
+                              setShowPasswords={memoizedSetShowPasswords}
                             />
                           </div>
                         </div>
