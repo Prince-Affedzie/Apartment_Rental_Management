@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useContractPayments } from "../Context/ContractPaymentContext";
 import { Link } from "react-router-dom";
 import VehicleSidebar from "../Components/Layout/VehicleSidebar";
@@ -10,6 +10,13 @@ const ContractPaymentsList = () => {
   const [deletingId, setDeletingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  
+      useEffect(() => {
+      const handleResize = () => setWindowWidth(window.innerWidth);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this payment? This action cannot be undone.')) {
@@ -163,9 +170,11 @@ const ContractPaymentsList = () => {
             )}
 
             {/* Payments Table */}
-           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
   {/* Desktop Table View */}
-  <div className="hidden md:block">
+  <div style={{
+             display: windowWidth >= 768 ? 'block' : 'none',
+            }}>
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
