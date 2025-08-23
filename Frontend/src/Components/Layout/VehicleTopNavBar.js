@@ -37,7 +37,7 @@ export default function VehicleTopNav({ toggleMobileMenu, mobileMenuOpen }) {
   ];
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-40 mb-4"> {/* Increased z-index to 40 */}
+    <header className="bg-white shadow-sm sticky top-0 z-40 mb-2"> {/* Increased z-index to 40 */}
       <div className="px-4 py-3 ">
         <div className="flex items-center justify-between">
           {/* Left side - Branding and Navigation */}
