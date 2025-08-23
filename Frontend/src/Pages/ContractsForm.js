@@ -6,6 +6,7 @@ import { getVehicles } from '../APIS/APIS';
 import VehicleSidebar from '../Components/Layout/VehicleSidebar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import VehicleTopNav from '../Components/Layout/VehicleTopNavBar';
 
 // UTIL: count periods between dates (inclusive-ish for UX)
 const countPeriods = (startDate, endDate, frequency) => {
@@ -168,6 +169,7 @@ export default function ContractForm() {
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
         {/* Header */}
         <div className="px-6 py-4 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">

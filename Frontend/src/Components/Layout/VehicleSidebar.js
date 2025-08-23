@@ -49,11 +49,11 @@ export default function VehicleSidebar({ toggleMobileMenu, mobileMenuOpen }) {
 
   return (
     <>
-      <div className="fixed top-4 left-4 z-50 md:hidden">
+     {/* <div className="fixed top-4 left-4 z-50 md:hidden">
         <button className="bg-white p-2 rounded-full shadow-md" onClick={toggleMobileMenu}>
           {mobileMenuOpen ? <X /> : <Menu />}
         </button>
-      </div>
+      </div>*/}
 
       <aside
         className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-40 transform transition-transform duration-300 ease-in-out flex flex-col
@@ -109,5 +109,6 @@ function Section({ title, items, currentPath, navigate }) {
         ))}
       </ul>
     </div>
+    
   );
 }

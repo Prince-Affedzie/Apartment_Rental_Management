@@ -4,6 +4,7 @@ import { useContracts } from "../Context/ContractsContext";
 import { useDrivers } from "../Context/DriverContext";
 import { useNavigate } from "react-router-dom";
 import VehicleSidebar from "../Components/Layout/VehicleSidebar";
+import VehicleTopNav from "../Components/Layout/VehicleTopNavBar";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -125,6 +126,7 @@ const AddContractPayment = () => {
     <div className="flex h-screen bg-gray-50">
       <ToastContainer position="top-right" autoClose={3000} />
        <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
+        <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
       
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}

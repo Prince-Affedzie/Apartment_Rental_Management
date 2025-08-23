@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import VehicleSidebar from '../Components/Layout/VehicleSidebar';
 import TopNav from '../Components/Layout/TopNav';
 import exportToExcel from '../Utils/exportToExcel';
+import VehicleTopNav from '../Components/Layout/VehicleTopNavBar';
 
 export default function MaintenanceListPage() {
   const [records, setRecords] = useState([]);
@@ -84,7 +85,7 @@ export default function MaintenanceListPage() {
     <div className="flex flex-col md:flex-row h-screen bg-gray-50 overflow-x-hidden">
       <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
       <div className="flex-1">
-        <TopNav  toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
+       <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
         <div className="p-4 sm:p-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">

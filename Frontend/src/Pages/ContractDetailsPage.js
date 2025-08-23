@@ -4,6 +4,7 @@ import { useContracts } from '../Context/ContractsContext';
 import VehicleSidebar from '../Components/Layout/VehicleSidebar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import VehicleTopNav from '../Components/Layout/VehicleTopNavBar';
 
 // Utility function to format dates
 const formatDate = (dateString) => {
@@ -156,6 +157,7 @@ const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
       <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
       
       <div className="flex-1 flex flex-col overflow-hidden">
+      <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
         {/* Header */}
         <div className="px-6 py-4 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">

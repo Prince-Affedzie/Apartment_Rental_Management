@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import VehicleSidebar from '../Components/Layout/VehicleSidebar';
 import TopNav from '../Components/Layout/TopNav';
+import VehicleTopNav from '../Components/Layout/VehicleTopNavBar';
 import { getVehicles, addMaintenanceRecord } from '../APIS/APIS';
 import Select from 'react-select';
 import ProcessingIndicator from '../Components/units/processingIndicator';
@@ -89,8 +90,7 @@ export default function AddMaintenancePage() {
       <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
 
       <div className="flex-1 flex flex-col">
-        <TopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
-
+       <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
         <main className="flex-1 p-6 mt-16">
           <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
             <h1 className="text-2xl font-bold mb-6">Add Maintenance Record</h1>
