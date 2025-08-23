@@ -4,6 +4,7 @@ import { useContracts } from "../Context/ContractsContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import VehicleSidebar from "../Components/Layout/VehicleSidebar";
+import VehicleTopNav from "../Components/Layout/VehicleTopNavBar";
 
 const ContractsPage = () => {
   const { contracts, loading, error, removeContract } = useContracts();
@@ -34,6 +35,7 @@ const ContractsPage = () => {
   if (error) return (
     <div className="flex min-h-screen bg-gray-50">
       <VehicleSidebar />
+      <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
       <div className="flex-1 flex items-center justify-center">
         <div className="text-red-500 text-lg px-4 text-center">Error loading contracts: {error.message}</div>
       </div>
@@ -231,6 +233,7 @@ const ContractsPage = () => {
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
         {/* Header */}
         <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-200">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">

@@ -9,7 +9,7 @@ import {
   deleteDriver,
 } from "../APIS/APIS";
 import VehicleSidebar from "../Components/Layout/VehicleSidebar";
-
+import VehicleTopNav from "../Components/Layout/VehicleTopNavBar";
 export default function DriversPage() {
   const { drivers, loading, addDriver, removeDriver, editDriver } = useDrivers();
   const [newDriver, setNewDriver] = useState({
@@ -132,6 +132,7 @@ export default function DriversPage() {
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
         {/* Header */}
         <div className="px-6 py-4 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">

@@ -134,6 +134,7 @@ const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
       <div className="flex h-screen bg-gray-50">
          <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
         <div className="flex-1 flex items-center justify-center">
+          <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
           <div className="text-center">
             <div className="text-red-600 bg-red-50 p-6 rounded-lg max-w-md">
               <h3 className="text-lg font-semibold mb-2">Error Loading Contract</h3>
@@ -165,7 +166,7 @@ const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
               <h1 className="text-2xl font-bold text-gray-800">Contract Details</h1>
               <p className="text-gray-600 text-sm mt-1">Contract ID: {contract._id}</p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className=" hiddden md:flex items-center space-x-3">
               <Link
                 to="/contracts/list"
                 className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -330,30 +331,30 @@ const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-between items-center pt-6 border-t border-gray-200">
-                  <button
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    className="flex items-center px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 disabled:opacity-50"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    {deleting ? 'Deleting...' : 'Delete Contract'}
-                  </button>
-                  
-                  <div className="flex space-x-3">
-                    <Link
-                      to={`/edit_contract/${contract._id}`}
-                      className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                      Edit Contract
-                    </Link>
-                  </div>
-                </div>
+               <div className="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-gray-200 gap-3 sm:gap-0">
+  <button
+    onClick={handleDelete}
+    disabled={deleting}
+    className="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 disabled:opacity-50 text-sm sm:text-base w-full sm:w-auto justify-center"
+  >
+    <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 极速赛车开奖结果 极速赛车开奖直播 极速赛车开奖记录" />
+    </svg>
+    {deleting ? 'Deleting...' : 'Delete'}
+  </button>
+  
+  <div className="flex space-x-2 sm:space-x-3 w-full sm:w-auto">
+    <Link
+      to={`/edit_contract/${contract._id}`}
+      className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm sm:text-base w-full sm:w-auto justify-center"
+    >
+      <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2极速赛车开奖结果 极速赛车开奖直播 极速赛车开奖记录a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+      Edit
+    </Link>
+  </div>
+</div>
               </div>
             </div>
           </div>

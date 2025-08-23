@@ -37,13 +37,16 @@ export default function VehicleTopNav({ toggleMobileMenu, mobileMenuOpen }) {
   ];
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-30">
+    <header className="bg-white shadow-sm sticky top-0 z-40"> {/* Increased z-index to 40 */}
       <div className="px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Left side - Branding and Navigation */}
           <div className="flex items-center">
-            {/* Mobile menu button */}
-            <button onClick={toggleMobileMenu} className="md:hidden mr-4">
+            {/* Mobile menu button - Increased z-index and fixed positioning */}
+            <button 
+              onClick={toggleMobileMenu} 
+              className="md:hidden mr-4 relative z-50" // Increased z-index to 50
+            >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             
@@ -67,59 +70,7 @@ export default function VehicleTopNav({ toggleMobileMenu, mobileMenuOpen }) {
             </nav>
           </div>
 
-          {/* Right side controls 
-          <div className="flex items-center space-x-4">
-            <div className="relative hidden md:block">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search vehicles, drivers..."
-                className="block w-64 pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            <div className="relative hidden md:block">
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="GHS">GHS</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-              </div>
-            </div>
-
-            <button className="p-1 text-gray-400 hover:text-gray-500 focus:outline-none relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                3
-              </span>
-            </button>
-
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0">
-                {profile?.name ? (
-                  <div className="h-8 w-8 bg-blue-600 text-white font-medium rounded-full flex items-center justify-center">
-                    {profile.name.slice(0, 2).toUpperCase()}
-                  </div>
-                ) : (
-                  <User className="h-8 w-8 rounded-full bg-gray-200 p-1 text-gray-600" />
-                )}
-              </div>
-              <div className="hidden md:block leading-tight">
-                <p className="text-sm font-medium text-gray-800">{profile?.name || 'User'}</p>
-                <p className="text-xs text-gray-500">{profile?.role || 'Administrator'}</p>
-              </div>
-            </div>
-          </div>*/}
+          {/* Right side controls - commented out */}
         </div>
 
         {/* Mobile Navigation Links - Horizontal scroll */}

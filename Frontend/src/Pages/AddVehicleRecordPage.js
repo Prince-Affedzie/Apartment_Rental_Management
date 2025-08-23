@@ -107,7 +107,7 @@ export default function AddVehiclePage() {
           mobileMenuOpen={mobileMenuOpen}
           className="sticky top-0 z-30 bg-white shadow-md"
         />
-        <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen}/>
+       
         <main className="flex-1 p-2 sm:p-4 md:p-6 overflow-y-auto">
           <div className="max-w-5xl mx-auto bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow">
             <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Add New Vehicle Record</h1>
