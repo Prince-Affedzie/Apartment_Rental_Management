@@ -404,7 +404,7 @@ const ContractsPage = () => {
 
             {/* Desktop Table View */}
             <div style={{
-             display: windowWidth >= 768 ? 'Block' : 'none',
+             display: windowWidth >= 768 ? 'block' : 'none',
             }}>
               <div className="mt-6 overflow-hidden border border-gray-200 rounded-lg shadow-sm">
                 <div className="overflow-x-auto">
