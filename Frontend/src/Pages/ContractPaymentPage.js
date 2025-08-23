@@ -91,20 +91,21 @@ const ContractPaymentsList = () => {
         {/* Header */}
         <div className="px-6 py-4 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">Contract Payments</h1>
-              <p className="text-gray-600 text-sm mt-1">Manage and track all contract payments</p>
-            </div>
-            <Link
-              to="/add_contract_payment"
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Add Payment
-            </Link>
-          </div>
+  <div>
+    <h1 className="text-2xl font-bold text-gray-800">Contract Payments</h1>
+    <p className="text-gray-600 text-sm mt-1">Manage and track all contract payments</p>
+  </div>
+  <Link
+    to="/add_contract_payment"
+    className="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
+  >
+    <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>
+    <span className="hidden sm:inline">Add Payment</span>
+    <span className="sm:hidden">Add</span>
+  </Link>
+</div>
         </div>
 
         {/* Main Content */}
