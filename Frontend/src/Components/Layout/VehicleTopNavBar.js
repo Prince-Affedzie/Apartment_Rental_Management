@@ -37,8 +37,8 @@ export default function VehicleTopNav({ toggleMobileMenu, mobileMenuOpen }) {
   ];
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-40"> {/* Increased z-index to 40 */}
-      <div className="px-4 py-3">
+    <header className="bg-white shadow-sm sticky top-0 z-40 mb-8"> {/* Increased z-index to 40 */}
+      <div className="px-4 py-3 ">
         <div className="flex items-center justify-between">
           {/* Left side - Branding and Navigation */}
           <div className="flex items-center">
@@ -74,7 +74,7 @@ export default function VehicleTopNav({ toggleMobileMenu, mobileMenuOpen }) {
         </div>
 
         {/* Mobile Navigation Links - Horizontal scroll */}
-        <div className="md:hidden flex overflow-x-auto pt-3 space-x-2">
+       {/* <div className="md:hidden flex overflow-x-auto pt-3 space-x-2">
           {navItems.map((item) => (
             <Link
               key={item.path}
@@ -89,7 +89,7 @@ export default function VehicleTopNav({ toggleMobileMenu, mobileMenuOpen }) {
               {item.label}
             </Link>
           ))}
-        </div>
+        </div>*/}
       </div>
     </header>
   );
