@@ -396,7 +396,7 @@ const ContractsPage = () => {
             </div>
 
             {/* Desktop Table View */}
-            <div className= "hidden md:block">
+            <div className="hidden md:block">
               <div className="mt-6 overflow-hidden border border-gray-200 rounded-lg shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
