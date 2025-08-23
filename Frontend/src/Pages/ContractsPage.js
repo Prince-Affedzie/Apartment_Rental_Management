@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate, Link, Links } from "react-router-dom";
 import { useContracts } from "../Context/ContractsContext";
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,6 +14,13 @@ const ContractsPage = () => {
   const [sortOrder, setSortOrder] = useState("desc");
   const [viewMode, setViewMode] = useState("table"); // table or cards
    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   if (loading) return (
     <div className="flex min-h-screen bg-gray-50">
@@ -396,7 +403,9 @@ const ContractsPage = () => {
             </div>
 
             {/* Desktop Table View */}
-            <div className="hidden md:block">
+            <div style={{
+             display: windowWidth >= 768 ? 'Block' : 'none',
+            }}>
               <div className="mt-6 overflow-hidden border border-gray-200 rounded-lg shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
