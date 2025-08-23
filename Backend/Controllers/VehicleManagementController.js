@@ -4,8 +4,8 @@ const {CarMaintenance} =require('../Models/CarMaintenance')
 
 const addVehicleRecord =async(req,res)=>{
     try{
-        const { vehicleType, make, model,vehicleRegNum, chassisNum, driverName,contactDetails,
-            licenseNum,licenseType, licenseNumExp,maintenanceHist
+        const { vehicleType, make, model,vehicleRegNum, chassisNum, driver,
+           maintenanceHist
         } = req.body
 
         
@@ -15,11 +15,7 @@ const addVehicleRecord =async(req,res)=>{
             model:model,
             vehicleRegNum:vehicleRegNum,
             chassisNum:chassisNum,
-            driverName:driverName,
-            contactDetails:contactDetails,
-            licenseNum:licenseNum,
-            licenseType:licenseType,
-            licenseNumExp: licenseNumExp,
+            driver:driver,
             maintenanceHist:maintenanceHist
         })
         await record.save()
@@ -69,7 +65,8 @@ const deleteVehicleRecord = async(req,res)=>{
 
 const getVehicleRecords = async(req,res)=>{
     try{
-        const vehicles = await Vehicle.find().sort({createdAt:-1})
+        const vehicles = await Vehicle.find().populate('driver').sort({createdAt:-1})
+        console.log(vehicles)
         res.status(200).json(vehicles)
 
     }catch(err){
@@ -81,7 +78,7 @@ const getVehicleRecords = async(req,res)=>{
 const getVehicleRecord = async(req,res)=>{
     try{
         const {Id} = req.params
-        const vehicle = await Vehicle.findById(Id)
+        const vehicle = await Vehicle.findById(Id).populate('driver')
         if(!vehicle){
             return res.status(404).json({message:"No Vehicle Found"})
         }

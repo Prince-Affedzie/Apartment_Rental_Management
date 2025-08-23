@@ -24,23 +24,10 @@ const vehicleSchema = new schema({
         date:{type:Date},
         status: {type: String, enum: ['ongoing','pending','completed']}
     }],
-    driverName:{
-        type: String
-    },
-    contactDetails:{
-        phone:{type: String},
-        location:{type:String}
-    },
-    licenseNum:{
-        type:String
-    },
-    licenseType:{
-      type: String,
-      enum:['commercial','non-commercial']
-    },
-    licenseNumExp:{
-     type: Date
-    }
+   driver:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Driver'
+   }
 },{timestamps:true})
 
 const Vehicle = mongoose.model('Vehicle',vehicleSchema)

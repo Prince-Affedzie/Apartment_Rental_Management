@@ -11,6 +11,9 @@ const {userRouter} = require('./Routes/UserRoutes')
 const {apartmentRouter} = require('./Routes/TenantsRoutes')
 const {paymentRouter} = require('./Routes/PaymentRoute')
 const {vehicleRoute} = require('./Routes/VehicleRoutes')
+const {driverRouter} = require('./Routes/DriverRoute')
+const {contractRouter} = require('./Routes/ContractsRoute')
+const {contractPaymentRouter} = require('./Routes/ContractPaymentRoute')
 require('dotenv').config()
 const startRentNotifier = require('./Utils/rentNotifier');
 
@@ -41,6 +44,8 @@ app.use(cors({
     origin: "https://www.trackingproperty.com",
     credentials:true
     //https://orange-winner-q7vw64jp5gjq246qw-3000.app.github.dev/
+    // https://www.trackingproperty.com
+    // http://localhost:3000
 }))
 app.use('/uploads',express.static('uploads'))
 mongoose.connect(process.env.DATABase_URL)
@@ -61,3 +66,6 @@ app.use('/api',userRouter)
 app.use('/api',apartmentRouter)
 app.use('/api',paymentRouter)
 app.use('/api',vehicleRoute)
+app.use('/api',driverRouter)
+app.use('/api',contractRouter)
+app.use('/api',contractPaymentRouter)
