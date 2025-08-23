@@ -7,6 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { getVehicles,deleteVehicleRecord} from '../APIS/APIS';
 import { Car, Truck, BusFront, Users, Phone, MapPin, CalendarCheck2, Eye, Pencil, Trash2, X } from 'lucide-react';
 import exportToExcel from '../Utils/exportToExcel';
+import VehicleTopNav from '../Components/Layout/VehicleTopNavBar';
+
 export default function VehicleListPage() {
    
 
@@ -103,10 +105,10 @@ export default function VehicleListPage() {
   return (
     <div className="flex h-screen bg-gray-50">
       <VehicleSidebar toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
-      <div className="flex-1">
-        <TopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <VehicleTopNav toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)} mobileMenuOpen={mobileMenuOpen} />
 
-        <main className="p-6 mt-16">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <h1 className="text-2xl font-bold">Vehicle Records</h1>
             <div className="flex flex-col sm:flex-row gap-2">
@@ -165,9 +167,9 @@ export default function VehicleListPage() {
                     <p className="text-sm text-gray-700 mb-1"><strong>Make:</strong> {vehicle.make}</p>
                     <p className="text-sm text-gray-700 mb-1"><strong>Model:</strong> {vehicle.model}</p>
                     <p className="text-sm text-gray-700 mb-1"><strong>Chassis:</strong> {vehicle.chassisNum}</p>
-                    <p className="text-sm text-gray-700 mb-1 flex items-center gap-1"><Users size={14} /> <strong>Driver:</strong> {vehicle.driverName}</p>
-                    <p className="text-sm text-gray-700 mb-1 flex items-center gap-1"><Phone size={14} /> {vehicle.contactDetails?.phone}</p>
-                    <p className="text-sm text-gray-700 mb-1 flex items-center gap-1"><MapPin size={14} /> {vehicle.contactDetails?.location}</p>
+                    <p className="text-sm text-gray-700 mb-1 flex items-center gap-1"><Users size={14} /> <strong>Driver:</strong> {vehicle.driver?.firstName || 'N/A'}</p>
+                    <p className="text-sm text-gray-700 mb-1 flex items-center gap-1"><Phone size={14} /> {vehicle.driver?.phone || 'N/A'}</p>
+                    <p className="text-sm text-gray-700 mb-1 flex items-center gap-1"><MapPin size={14} /> {vehicle.driver?.address  || 'N/A'}</p>
                     <p className="text-sm text-gray-700 mb-1"><strong>License:</strong> {vehicle.licenseNum} ({vehicle.licenseType})</p>
                     <p className="text-sm text-gray-600 mb-1 flex items-center gap-1">
                       <CalendarCheck2 size={14} /> Exp: {new Date(vehicle.licenseNumExp).toLocaleDateString()}
@@ -215,9 +217,9 @@ export default function VehicleListPage() {
                 <p><strong>Model:</strong> {selectedVehicle.model}</p>
                 <p><strong>Reg. Number:</strong> {selectedVehicle.vehicleRegNum}</p>
                 <p><strong>Chassis:</strong> {selectedVehicle.chassisNum}</p>
-                <p><strong>Driver:</strong> {selectedVehicle.driverName}</p>
-                <p><strong>Phone:</strong> {selectedVehicle.contactDetails?.phone}</p>
-                <p><strong>Location:</strong> {selectedVehicle.contactDetails?.location}</p>
+                <p><strong>Driver:</strong> {selectedVehicle.driver?.firstName || 'N/a'}</p>
+                <p><strong>Phone:</strong> {selectedVehicle.driver?.phone || 'N/a'}</p>
+                <p><strong>Location:</strong> {selectedVehicle.driver?.address || 'N/a'}</p>
                 <p><strong>License:</strong> {selectedVehicle.licenseNum} ({selectedVehicle.licenseType})</p>
                 <p><strong>License Expiry:</strong> {new Date(selectedVehicle.licenseNumExp).toLocaleDateString()}</p>
                 <div className="mt-2">

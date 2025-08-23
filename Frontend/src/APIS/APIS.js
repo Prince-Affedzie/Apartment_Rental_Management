@@ -1,5 +1,7 @@
 import axios from "axios"
 //https://orange-winner-q7vw64jp5gjq246qw-5000.app.github.dev/
+//https://rental-vehicle-app-hfvqh.ondigitalocean.app/
+//http://localhost:5000
 const API = axios.create({baseURL: 'https://rental-vehicle-app-hfvqh.ondigitalocean.app/',withCredentials:true})
 export const login =(data)=> API.post("/api/login",data)
 export const fetchProfileInfo = ()=>API.get('/api/view/profile_info')
@@ -38,5 +40,30 @@ export const getMaintenanceRecords =()=>API.get('/api/get/maintenance_records')
 export const getSingleMaintenanceRecord = (Id) =>API.get(`/api/get/vehicle_maintenance_record/${Id}`)
 export const deleteMaintenanceRecord =(Id)=>API.delete(`/api/delete/maintenance_record/${Id}`)
 export const updateMaintenanceRecord = (Id,data)=>API.put(`/api/edit/vehicle_maintenance/${Id}`,data)
+
+
+
+//  Contract APIs
+export const getAllContracts = () => API.get(`/api/get_all_contracts`);
+export const getSingleContract = (Id) => API.get(`/api/get_contract/${Id}`);
+export const createContract = (data) => API.post(`/api/create_contract`, data);
+export const updateContract = (Id, data) => API.put(`/api/update_contract/${Id}`, data);
+export const deleteContract = (Id) => API.delete(`/api/delete_contract/${Id}`);
+
+//  Contract Payment APIs
+export const getAllContractPayments = () => API.get(`/api/get_all_contract_payments`);
+export const getSingleContractPayment = (Id) => API.get(`/api/get_contract_payment/${Id}`);
+export const addContractPayment = (data) => API.post(`/api/create_contract_payment`, data);
+export const updateContractPayment = (Id, data) => API.put(`/api/update_contract_payment/${Id}`, data);
+export const deleteContractPayment = (Id) => API.delete(`/api/delete_contract_payment/${Id}`);
+
+// Driver APIs
+export const getAllDrivers = () => API.get(`/api/get_all_drivers`);
+export const getSingleDriver = (Id) => API.get(`/api/get_driver/${Id}`);
+export const createDriver = (data) => API.post(`/api/add_new/driver`, data);
+export const updateDriver = (Id, data) => API.put(`/api/update_driver/${Id}`, data);
+export const deleteDriver = (Id) => API.delete(`/api/delete_driver/${Id}`);
+
+
 
  

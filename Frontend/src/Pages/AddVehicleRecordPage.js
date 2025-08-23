@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,55 +6,64 @@ import VehicleSidebar from '../Components/Layout/VehicleSidebar';
 import TopNav from '../Components/Layout/TopNav';
 import { addVehicleRecord } from '../APIS/APIS';
 import ProcessingIndicator from '../Components/units/processingIndicator';
+import { useDrivers } from '../Context/DriverContext';
+import VehicleTopNav from '../Components/Layout/VehicleTopNavBar';
+
 
 export default function AddVehiclePage() {
   const navigate = useNavigate();
+  const { drivers, fetchDrivers } = useDrivers();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [driversLoading, setDriversLoading] = useState(true);
 
   const [formData, setFormData] = useState({
-    vehicleType: '',
+    vehiceType: '',
     make: '',
     model: '',
     vehicleRegNum: '',
     chassisNum: '',
-    maintenanceHist: [{ hist: '', date: '' }],
-    driverName: '',
-    contactDetails: {
-      phone: '',
-      location: '',
-    },
-    licenseNum: '',
-    licenseType: '',
-    licenseNumExp: '',
+    maintenanceHist: [{ hist: '', cost: '', date: '', status: 'completed' }],
+    driver: ''
   });
+
+  useEffect(() => {
+    const loadDrivers = async () => {
+      try {
+        await fetchDrivers();
+      } catch (error) {
+        console.error('Error loading drivers:', error);
+        toast.error('Failed to load drivers');
+      } finally {
+        setDriversLoading(false);
+      }
+    };
+
+    loadDrivers();
+  }, [fetchDrivers]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.includes('contactDetails.')) {
-      const field = name.split('.')[1];
-      setFormData((prev) => ({
-        ...prev,
-        contactDetails: {
-          ...prev.contactDetails,
-          [field]: value,
-        },
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleMaintenanceChange = (index, field, value) => {
     const updatedHist = [...formData.maintenanceHist];
-    updatedHist[index][field] = value;
+    
+    // Convert cost to number if it's the cost field
+    if (field === 'cost') {
+      updatedHist[index][field] = value === '' ? 0 : Number(value);
+    } else {
+      updatedHist[index][field] = value;
+    }
+    
     setFormData((prev) => ({ ...prev, maintenanceHist: updatedHist }));
   };
 
   const addMaintenanceField = () => {
     setFormData((prev) => ({
       ...prev,
-      maintenanceHist: [...prev.maintenanceHist, { hist: '', date: '' }],
+      maintenanceHist: [...prev.maintenanceHist, { hist: '', cost: '', date: '', status: 'completed' }],
     }));
   };
 
@@ -93,14 +102,14 @@ export default function AddVehiclePage() {
       />
 
       <div className="flex-1 flex flex-col w-full">
-        <TopNav
+        <VehicleTopNav
           toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
           mobileMenuOpen={mobileMenuOpen}
           className="sticky top-0 z-30 bg-white shadow-md"
         />
 
         <main className="flex-1 p-2 sm:p-4 md:p-6 overflow-y-auto">
-          <div className="max-w-4xl mx-auto bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow">
+          <div className="max-w-5xl mx-auto bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow">
             <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center sm:text-left">Add New Vehicle Record</h1>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -108,8 +117,8 @@ export default function AddVehiclePage() {
               <div className="w-full">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Type *</label>
                 <select
-                  name="vehicleType"
-                  value={formData.vehicleType}
+                  name="vehiceType"
+                  value={formData.vehiceType}
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -146,6 +155,9 @@ export default function AddVehiclePage() {
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
+                </div>
+
+                <div className="w-full space-y-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Registration Number *</label>
                     <input
@@ -167,83 +179,28 @@ export default function AddVehiclePage() {
                     />
                   </div>
                 </div>
-
-                {/* Driver Details */}
-                <div className="w-full space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Driver Name *</label>
-                    <input
-                      name="driverName"
-                      value={formData.driverName}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
-                    <input
-                      name="contactDetails.phone"
-                      value={formData.contactDetails.phone}
-                      onChange={handleChange}
-                      required
-                      type="tel"
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Location *</label>
-                    <input
-                      name="contactDetails.location"
-                      value={formData.contactDetails.location}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
               </div>
 
-              {/* License Information */}
-              <div className="w-full pt-2">
-                <h2 className="text-lg font-medium mb-3">License Information</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">License Number *</label>
-                    <input
-                      name="licenseNum"
-                      value={formData.licenseNum}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">License Type *</label>
-                    <select
-                      name="licenseType"
-                      value={formData.licenseType}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select type</option>
-                      <option value="commercial">Commercial</option>
-                      <option value="non-commercial">Non-Commercial</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">License Expiry Date *</label>
-                    <input
-                      type="date"
-                      name="licenseNumExp"
-                      value={formData.licenseNumExp}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
+              {/* Driver Selection */}
+              <div className="w-full">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Assign Driver</label>
+                <select
+                  name="driver"
+                  value={formData.driver}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={driversLoading}
+                >
+                  <option value="">Select a driver (optional)</option>
+                  {drivers.map((driver) => (
+                    <option key={driver._id} value={driver._id}>
+                      {driver.firstName} {driver.lastName} - {driver.licenseNumber}
+                    </option>
+                  ))}
+                </select>
+                {driversLoading && (
+                  <p className="text-xs text-gray-500 mt-1">Loading drivers...</p>
+                )}
               </div>
 
               {/* Maintenance History */}
@@ -261,36 +218,65 @@ export default function AddVehiclePage() {
                 
                 <div className="space-y-3">
                   {formData.maintenanceHist.map((item, index) => (
-                    <div key={index} className="flex flex-col sm:flex-row gap-2 p-3 border border-gray-200 rounded bg-gray-50">
-                      <div className="flex-grow">
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Maintenance Detail</label>
-                        <input
-                          type="text"
-                          placeholder="e.g., Oil Change"
-                          value={item.hist}
-                          onChange={(e) => handleMaintenanceChange(index, 'hist', e.target.value)}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </div>
-                      <div className="sm:w-40">
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Date</label>
-                        <input
-                          type="date"
-                          value={item.date}
-                          onChange={(e) => handleMaintenanceChange(index, 'date', e.target.value)}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                    <div key={index} className="p-3 border border-gray-200 rounded bg-gray-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Maintenance Detail</label>
+                          <input
+                            type="text"
+                            placeholder="e.g., Oil Change"
+                            value={item.hist}
+                            onChange={(e) => handleMaintenanceChange(index, 'hist', e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Cost (GHS)</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="0.00"
+                            value={item.cost}
+                            onChange={(e) => handleMaintenanceChange(index, 'cost', e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Date</label>
+                          <input
+                            type="date"
+                            value={item.date}
+                            onChange={(e) => handleMaintenanceChange(index, 'date', e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                          <select
+                            value={item.status}
+                            onChange={(e) => handleMaintenanceChange(index, 'status', e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="ongoing">Ongoing</option>
+                            <option value="pending">Pending</option>
+                            <option value="completed">Completed</option>
+                          </select>
+                        </div>
                       </div>
                       {formData.maintenanceHist.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeMaintenanceField(index)}
-                          className="mt-2 sm:mt-6 text-red-500 hover:text-red-700 text-sm"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
+                        <div className="mt-2 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => removeMaintenanceField(index)}
+                            className="text-red-500 hover:text-red-700 text-sm flex items-center"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Remove
+                          </button>
+                        </div>
                       )}
                     </div>
                   ))}

@@ -5,13 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ProfileContextProvider } from './Context/fetchProfileContext';
 import { FetchContextProvider} from './Context/initialFetchContext'
+import { DriversProvider } from './Context/DriverContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <ProfileContextProvider>
     < FetchContextProvider>
+   
     <App />
+   
     </ FetchContextProvider>
     </ProfileContextProvider>
   </React.StrictMode>
