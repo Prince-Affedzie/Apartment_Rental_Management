@@ -40,13 +40,15 @@ app.use(cookieParser())
 app.use(express.json())
 app.set('trust proxy', 1);
 
-app.use(cors({
-    origin: "https://www.trackingproperty.com",
-    credentials:true
-    //https://orange-winner-q7vw64jp5gjq246qw-3000.app.github.dev/
+//https://orange-winner-q7vw64jp5gjq246qw-3000.app.github.dev/
     // https://www.trackingproperty.com
     // http://localhost:3000
-}))
+
+app.use(cors({
+  origin: [process.env.Frontend_Url, process.env.Frontend_Url_Demo],
+  credentials: true
+}));
+
 app.use('/uploads',express.static('uploads'))
 mongoose.connect(process.env.DATABase_URL)
      .then(()=>{
