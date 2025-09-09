@@ -43,7 +43,7 @@ app.set('trust proxy', 1);
 //https://orange-winner-q7vw64jp5gjq246qw-3000.app.github.dev/
     // https://www.trackingproperty.com
     // http://localhost:3000
-[process.env.Frontend_Url, process.env.Frontend_Url_Demo]
+//[process.env.Frontend_Url, process.env.Frontend_Url_Demo]
 app.use(cors({
   origin: true,
   credentials: true
