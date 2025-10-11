@@ -95,10 +95,10 @@ export default function LoginPage() {
           role = prof?.role;
         }
 
-        /*if (!role) {
+        if (!role) {
           toast.error("Unable to determine user role.");
           return;
-        }*/
+        }
 
         console.log("Routing with role:", role);
         routeByRole(role);
