@@ -50,16 +50,13 @@ app.use(express.json());
 app.set("trust proxy", 1);
 
 //https://orange-winner-q7vw64jp5gjq246qw-3000.app.github.dev/
-// https://www.trackingproperty.com
-// http://localhost:3000
-
-app.use(
-  cors({
-    origin: [process.env.Frontend_Url, process.env.Frontend_Url_Demo],
-    // origin: ["http://localhost:3000"],
-    credentials: true,
-  })
-);
+    // https://www.trackingproperty.com
+    // http://localhost:3000
+//[process.env.Frontend_Url, process.env.Frontend_Url_Demo]
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
 app.use("/uploads", express.static("uploads"));
 mongoose
