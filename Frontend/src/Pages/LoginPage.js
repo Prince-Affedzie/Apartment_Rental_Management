@@ -314,19 +314,21 @@ export default function LoginPage() {
                     value={newUser.email}
                     onChange={handleNewUserChange}
                     placeholder="Email Address"
+                    required
                     className="w-full px-3 py-3 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">
-                    Phone
+                    Phone Number
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     value={newUser.phone}
                     onChange={handleNewUserChange}
-                    placeholder="Phone Number"
+                    placeholder="e.g +233 54* *** ***"
+                    required
                     className="w-full px-3 py-3 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
