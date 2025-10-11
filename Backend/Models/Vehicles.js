@@ -1,34 +1,46 @@
-const mongoose = require('mongoose')
-const schema = mongoose.Schema
+const mongoose = require("mongoose");
+const schema = mongoose.Schema;
 
-const vehicleSchema = new schema({
-    vehiceType:{
-        type:String,
-        enum:['commercial car','luxury car','taxi','truck','bus']
+const vehicleSchema = new schema(
+  {
+    vehiceType: {
+      type: String,
+      enum: ["commercial car", "luxury car", "taxi", "truck", "bus"],
     },
-    make:{
-        type:String
+    make: {
+      type: String,
     },
-    model:{
-        type:String
+    model: {
+      type: String,
     },
-    vehicleRegNum:{
-        type: String
+    vehicleRegNum: {
+      type: String,
     },
-    chassisNum:{
-        type: String
+    chassisNum: {
+      type: String,
     },
-    maintenanceHist:[{
-        hist:[{type:String}],
-        cost:{type:Number},
-        date:{type:Date},
-        status: {type: String, enum: ['ongoing','pending','completed']}
-    }],
-   driver:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref:'Driver'
-   }
-},{timestamps:true})
+    maintenanceHist: [
+      {
+        hist: [{ type: String }],
+        cost: { type: Number },
+        date: { type: Date },
+        status: { type: String, enum: ["ongoing", "pending", "completed"] },
+      },
+    ],
+    driver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Driver",
+      required: false,
+    },
+    // Added userID
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const Vehicle = mongoose.model('Vehicle',vehicleSchema)
-module.exports ={Vehicle}
+const Vehicle = mongoose.model("Vehicle", vehicleSchema);
+module.exports = { Vehicle };

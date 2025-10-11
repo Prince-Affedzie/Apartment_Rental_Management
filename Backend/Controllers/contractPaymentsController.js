@@ -1,27 +1,35 @@
-const { ContractPayment } = require('../Models/ContractPayments');
-const { Contract } = require('../Models/ContractSchema');
+const { ContractPayment } = require("../Models/ContractPayments");
+const { Contract } = require("../Models/ContractSchema");
 
 // Record a Payment
 const createPayment = async (req, res) => {
   try {
-    const payment = await ContractPayment.create(req.body);
+    const paymentData = {
+      ...req.body,
+      userId: req.userId,
+    };
+
+    const payment = await ContractPayment.create(paymentData);
 
     // Update Contract balance when payment is added
-     const contractToUpdate = await Contract.findById(payment.contractId)
+    const contractToUpdate = await Contract.findOne({
+      _id: req.body.contractId,
+      userId: req.userId,
+    });
+
     if (!contractToUpdate) {
-      return res.status(404).json({ message: "Contract not found" })
+      return res.status(404).json({ message: "Contract not found" });
     }
 
-    
-    const totalPaymentMadeUpdated = (contractToUpdate.totalAmountPaid ) + payment.amount
-    const balanceLeft = (contractToUpdate.expectedTotalPaymentAmount ) - totalPaymentMadeUpdated
+    const totalPaymentMadeUpdated =
+      contractToUpdate.totalAmountPaid + payment.amount;
+    const balanceLeft =
+      contractToUpdate.expectedTotalPaymentAmount - totalPaymentMadeUpdated;
 
-    contractToUpdate.totalAmountPaid = totalPaymentMadeUpdated
-    contractToUpdate.balanceLeft = balanceLeft
+    contractToUpdate.totalAmountPaid = totalPaymentMadeUpdated;
+    contractToUpdate.balanceLeft = balanceLeft;
 
-    
-    await contractToUpdate.save()
-
+    await contractToUpdate.save();
 
     res.status(201).json(payment);
   } catch (err) {
@@ -32,7 +40,7 @@ const createPayment = async (req, res) => {
 // Get All Payments
 const getPayments = async (req, res) => {
   try {
-    const payments = await ContractPayment.find()
+    const payments = await ContractPayment.find({ userId: req.userId })
       .populate("contractId")
       .populate("driverId", "firstName lastName");
     res.json(payments);
@@ -44,9 +52,13 @@ const getPayments = async (req, res) => {
 // Get Single Payment
 const getPaymentById = async (req, res) => {
   try {
-    const payment = await ContractPayment.findById(req.params.id)
+    const payment = await ContractPayment.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    })
       .populate("contractId")
       .populate("driverId", "firstName lastName");
+
     if (!payment) return res.status(404).json({ error: "Payment not found" });
     res.json(payment);
   } catch (err) {
@@ -57,40 +69,45 @@ const getPaymentById = async (req, res) => {
 // Update Payment
 const updatePayment = async (req, res) => {
   try {
-    const { id } = req.params
-    console.log(id)
-    console.log(req.body)
-    const payment = await ContractPayment.findById(id)
+    const { id } = req.params;
+    console.log(id);
+    console.log(req.body);
+    const payment = await ContractPayment.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
     if (!payment) return res.status(404).json({ error: "Payment not found" });
 
-    const contractToUpdate = await Contract.findById(req.body.contractId)
+    const contractToUpdate = await Contract.findOne({
+      _id: req.body.contractId,
+      userId: req.userId,
+    });
 
     if (!contractToUpdate) {
-      return res.status(404).json({ message: "Contract not found" })
+      return res.status(404).json({ message: "Contract not found" });
     }
 
     // If amount is being updated, adjust contract totals
-    if (req.body.amount && req.body.amount !==  payment.amount) {
-      const oldAmount = payment.amount
-      const newAmount = req.body.amount
+    if (req.body.amount && req.body.amount !== payment.amount) {
+      const oldAmount = payment.amount;
+      const newAmount = req.body.amount;
 
       // Update contract totals
       contractToUpdate.totalAmountPaid =
-        (contractToUpdate.totalAmountPaid) - oldAmount + newAmount
+        contractToUpdate.totalAmountPaid - oldAmount + newAmount;
 
       contractToUpdate.balanceLeft =
-        (contractToUpdate.expectedTotalPaymentAmount) -
-        contractToUpdate.totalAmountPaid
+        contractToUpdate.expectedTotalPaymentAmount -
+        contractToUpdate.totalAmountPaid;
 
-      await contractToUpdate.save()
+      await contractToUpdate.save();
     }
 
-
-     Object.assign(payment, req.body)
-    await payment.save()
-     res.status(200).json({ message: "Contract Payment Updated Successfully" })
+    Object.assign(payment, req.body);
+    await payment.save();
+    res.status(200).json({ message: "Contract Payment Updated Successfully" });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(400).json({ error: err.message });
   }
 };
@@ -98,7 +115,10 @@ const updatePayment = async (req, res) => {
 // Delete Payment
 const deletePayment = async (req, res) => {
   try {
-    const payment = await ContractPayment.findByIdAndDelete(req.params.id);
+    const payment = await ContractPayment.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
     if (!payment) return res.status(404).json({ error: "Payment not found" });
     res.json({ message: "Payment deleted successfully" });
   } catch (err) {
@@ -106,4 +126,10 @@ const deletePayment = async (req, res) => {
   }
 };
 
-module.exports = {createPayment,updatePayment,deletePayment,getPaymentById,getPayments}
+module.exports = {
+  createPayment,
+  updatePayment,
+  deletePayment,
+  getPaymentById,
+  getPayments,
+};
