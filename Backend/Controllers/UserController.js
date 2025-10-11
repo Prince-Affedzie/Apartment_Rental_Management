@@ -55,10 +55,10 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User Account not found" });
     }
-    /*const isPasswordMatch = await bcrypt.compare(password, user.password);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return res.status(400).json({ message: "Invalid Username or Password" });
-    }*/
+    }
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
