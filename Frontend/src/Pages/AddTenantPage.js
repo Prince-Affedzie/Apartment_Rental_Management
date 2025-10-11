@@ -84,7 +84,7 @@ export default function AddTenantPage() {
 
   useEffect(() => {
     if (!isTotalAmountFocused && formData.noOfMonthsRented && formData.monthlyPrice && formData.amountPaidOnUtility) {
-      const calculatedTotal = parseFloat(formData.noOfMonthsRented) * parseFloat(formData.monthlyPrice) + parseFloat(formData.amountPaidOnUtility);
+      const calculatedTotal = parseFloat(formData.noOfMonthsRented) * parseFloat(formData.monthlyPrice);
       setFormData(prev => ({
         ...prev,
         totalAmount: isNaN(calculatedTotal) ? '' : calculatedTotal.toFixed(2),
