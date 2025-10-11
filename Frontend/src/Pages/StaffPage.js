@@ -12,7 +12,7 @@ import {
   FiCalendar,
   FiMenu,
   FiX,
-} from "react-icons/fi"; // Added FiMenu and FiX for hamburger
+} from "react-icons/fi";
 import { FaCarAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { getApartmentProperties, fetchTenantsRecords } from "../APIS/APIS";
@@ -35,7 +35,7 @@ export default function StaffPage() {
   const [apartments, setApartments] = useState([]);
   const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for hamburger menu
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { clearProfile } = useProfileContext();
 
@@ -161,39 +161,63 @@ export default function StaffPage() {
             {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
 
-          {/* Navigation Links */}
+          {/* Navigation Links - Desktop */}
+          <div className="hidden md:flex items-center space-x-4">
+            <button
+              onClick={() => navigate("/apartments/dashboard")}
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors py-2 px-3"
+            >
+              Property App
+            </button>
+            <button
+              onClick={() => navigate("/vehicles/dashboard")}
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors py-2 px-3"
+            >
+              Vehicle App
+            </button>
+            <button
+              onClick={handleLogout}
+              className="py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors font-medium"
+            >
+              Logout
+            </button>
+          </div>
+
+          {/* Navigation Links - Mobile */}
           <div
             className={`${
               isMenuOpen ? "flex" : "hidden"
-            } md:flex flex-col md:flex-row md:items-center absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none transition-all duration-300 ease-in-out`}
+            } md:hidden flex-col absolute top-14 left-0 w-full bg-white shadow-lg border-t border-gray-200`}
           >
             <button
               onClick={() => {
                 navigate("/apartments/dashboard");
-                setIsMenuOpen(false); // Close menu on click
+                setIsMenuOpen(false);
               }}
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors py-2 px-4 md:px-2"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors py-4 px-6 border-b border-gray-100 text-left hover:bg-blue-50"
             >
               Property App
             </button>
             <button
               onClick={() => {
                 navigate("/vehicles/dashboard");
-                setIsMenuOpen(false); // Close menu on click
+                setIsMenuOpen(false);
               }}
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors py-2 px-4 md:px-2"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors py-4 px-6 border-b border-gray-100 text-left hover:bg-green-50"
             >
               Vehicle App
             </button>
-            <button
-              onClick={() => {
-                handleLogout();
-                setIsMenuOpen(false); // Close menu on logout
-              }}
-              className="py-2 px-2 md:px-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors mt-2 md:mt-0 md:ml-4"
-            >
-              Logout
-            </button>
+            <div className="p-4 border-t border-gray-100">
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMenuOpen(false);
+                }}
+                className="w-full py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium shadow-sm"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </nav>
