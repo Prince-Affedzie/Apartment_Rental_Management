@@ -10,15 +10,16 @@ import {
   FiEye,
   FiPhone,
   FiCalendar,
-} from "react-icons/fi";
+  FiMenu,
+  FiX,
+} from "react-icons/fi"; // Added FiMenu and FiX for hamburger
 import { FaCarAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { getApartmentProperties, fetchTenantsRecords } from "../APIS/APIS"; // ⬅ added fetchTenantsRecords
+import { getApartmentProperties, fetchTenantsRecords } from "../APIS/APIS";
 import { Banknote } from "lucide-react";
 import StatusBadge from "../Components/units/StatusBadge";
 import { useProfileContext } from "../Context/fetchProfileContext";
 import { logout as apiLogout } from "../APIS/APIS";
-
 import {
   BarChart,
   Bar,
@@ -34,13 +35,18 @@ export default function StaffPage() {
   const [apartments, setApartments] = useState([]);
   const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for hamburger menu
   const navigate = useNavigate();
   const { clearProfile } = useProfileContext();
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     clearProfile();
-    navigate("/"); // Redirect to login/home
+    navigate("/");
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const features = [
@@ -59,7 +65,6 @@ export default function StaffPage() {
           getApartmentProperties(),
           fetchTenantsRecords(),
         ]);
-
         setApartments(aptRes?.data || []);
         setTenants(tenantRes?.data || []);
       } catch (err) {
@@ -88,7 +93,6 @@ export default function StaffPage() {
           "Status:",
           apt.status
         );
-
         if (apt.tenants) {
           apt.tenants.forEach((t, j) => {
             console.log(
@@ -124,7 +128,6 @@ export default function StaffPage() {
         month: "short",
         year: "numeric",
       });
-
       acc[month] = (acc[month] || 0) + parseFloat(apt.price);
     }
     return acc;
@@ -138,33 +141,7 @@ export default function StaffPage() {
 
   return (
     <>
-      {/* ===== Sticky Navbar ===== */}
-      {/* <nav className="sticky top-0 z-50 bg-white shadow-md">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1
-            onClick={() => navigate("/staff")}
-            className="text-xl font-bold text-blue-600 cursor-pointer"
-          >
-            Staff Dashboard
-          </h1>
-
-          <div className="flex space-x-6">
-            <button
-              onClick={() => navigate("/apartments/dashboard")}
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Property Management
-            </button>
-            <button
-              onClick={() => navigate("/vehicles/dashboard")}
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-            >
-              Vehicle Management
-            </button>
-          </div>
-        </div>
-      </nav> */}
-
+      {/* ===== Responsive Navbar ===== */}
       <nav className="sticky top-0 z-50 bg-white shadow-md">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo / Title */}
@@ -172,28 +149,48 @@ export default function StaffPage() {
             onClick={() => navigate("/staff")}
             className="text-xl font-bold text-blue-600 cursor-pointer"
           >
-            Staff Dashboard
+            Dashboard
           </h1>
 
-          {/* Navigation Links */}
-          <div className="flex items-center space-x-6">
-            <button
-              onClick={() => navigate("/apartments/dashboard")}
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Property Management
-            </button>
-            <button
-              onClick={() => navigate("/vehicles/dashboard")}
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-            >
-              Vehicle Management
-            </button>
+          {/* Hamburger Icon for Small Screens */}
+          <button
+            className="md:hidden text-gray-700 focus:outline-none"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          </button>
 
-            {/* 🚪 Logout Button */}
+          {/* Navigation Links */}
+          <div
+            className={`${
+              isMenuOpen ? "flex" : "hidden"
+            } md:flex flex-col md:flex-row md:items-center absolute md:static top-16 left-0 w-full md:w-auto bg-white md:bg-transparent shadow-md md:shadow-none transition-all duration-300 ease-in-out`}
+          >
             <button
-              onClick={handleLogout}
-              className="ml-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
+              onClick={() => {
+                navigate("/apartments/dashboard");
+                setIsMenuOpen(false); // Close menu on click
+              }}
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors py-2 px-4 md:px-2"
+            >
+              Property App
+            </button>
+            <button
+              onClick={() => {
+                navigate("/vehicles/dashboard");
+                setIsMenuOpen(false); // Close menu on click
+              }}
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors py-2 px-4 md:px-2"
+            >
+              Vehicle App
+            </button>
+            <button
+              onClick={() => {
+                handleLogout();
+                setIsMenuOpen(false); // Close menu on logout
+              }}
+              className="py-2 px-2 md:px-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors mt-2 md:mt-0 md:ml-4"
             >
               Logout
             </button>
@@ -214,7 +211,6 @@ export default function StaffPage() {
               <span className="text-blue-600">Streamline</span> Your Property &
               Vehicle Management
             </motion.h1>
-
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -235,21 +231,18 @@ export default function StaffPage() {
                   {metrics.totalProperties}
                 </span>
               </div>
-
               <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-start">
                 <span className="text-gray-500 text-sm">Total Tenants</span>
                 <span className="text-2xl font-bold text-gray-900">
                   {metrics.tenants}
                 </span>
               </div>
-
               <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-start">
                 <span className="text-gray-500 text-sm">Monthly Revenue</span>
                 <span className="text-2xl font-bold text-green-600">
                   GH₵{metrics.revenue.toLocaleString()}
                 </span>
               </div>
-
               <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-start">
                 <span className="text-gray-500 text-sm">Due Payments</span>
                 <span className="text-2xl font-bold text-red-600">
@@ -291,9 +284,7 @@ export default function StaffPage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 Financial Health Dashboard
               </h2>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Late Payments */}
                 <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-start">
                   <span className="text-red-600 font-medium flex items-center mb-2">
                     <i className="fas fa-clock mr-2"></i> Late Payments
@@ -305,12 +296,9 @@ export default function StaffPage() {
                     Overdue rent payments
                   </span>
                 </div>
-
-                {/* Monthly Cash Flow */}
                 <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-start">
                   <span className="text-green-600 font-medium flex items-center mb-2">
-                    <i className="fas fa-dollar-sign mr-2"></i> Monthly Cash
-                    Flow
+                    <i className="fas fa-dollar-sign mr-2"></i> Monthly Cash Flow
                   </span>
                   <span className="text-3xl font-bold text-green-600">
                     GH₵{(metrics.revenue - 0).toLocaleString()}
@@ -319,8 +307,6 @@ export default function StaffPage() {
                     Revenue minus expenses
                   </span>
                 </div>
-
-                {/* Avg. Rent */}
                 <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-start">
                   <span className="text-blue-600 font-medium flex items-center mb-2">
                     <i className="fas fa-calculator mr-2"></i> Avg. Rent
@@ -338,12 +324,9 @@ export default function StaffPage() {
                     Average rent per unit
                   </span>
                 </div>
-
-                {/* Upcoming Renewals */}
                 <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-start">
                   <span className="text-purple-600 font-medium flex items-center mb-2">
-                    <i className="fas fa-calendar-alt mr-2"></i> Upcoming
-                    Renewals
+                    <i className="fas fa-calendar-alt mr-2"></i> Upcoming Renewals
                   </span>
                   <span className="text-3xl font-bold text-gray-900">
                     {
@@ -368,13 +351,12 @@ export default function StaffPage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
             Your Properties
           </h2>
-
           {!loading && apartments.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
               {apartments
-                .slice() // make a copy first
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // newest first
-                .slice(0, 4) // only 4 latest
+                .slice()
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 4)
                 .map((apt) => (
                   <div
                     key={apt._id}
@@ -392,7 +374,6 @@ export default function StaffPage() {
                       </div>
                       <StatusBadge status={apt.status} />
                     </div>
-
                     <div className="flex justify-between mb-3">
                       <div className="flex items-center text-blue-600 font-medium">
                         <Banknote className="mr-1" size={16} />
@@ -404,18 +385,16 @@ export default function StaffPage() {
                         {apt.tenantCount === 1 ? "Tenant" : "Tenants"}
                       </div>
                     </div>
-
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                       {apt.description}
                     </p>
-
                     <div className="mt-auto pt-3 border-t border-gray-100 flex justify-between">
-                      {/* <button
+                      <button
                         onClick={() => navigate(`/apartments/${apt._id}`)}
                         className="flex items-center text-blue-500 hover:text-blue-700 text-sm"
                       >
                         <FiEye className="mr-1" /> View
-                      </button> */}
+                      </button>
                       <button
                         onClick={() => navigate(`/apartment/edit/${apt._id}`)}
                         className="flex items-center text-yellow-500 hover:text-yellow-600 text-sm"
@@ -432,7 +411,6 @@ export default function StaffPage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
             Recent Tenants
           </h2>
-
           {!loading && tenants.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
               {tenants
@@ -452,7 +430,6 @@ export default function StaffPage() {
                         <FiPhone className="mr-1" /> {t.tenantPhone}
                       </div>
                     </div>
-
                     <div className="text-sm text-gray-600 mb-3">
                       <span className="block truncate">
                         Apartment: {t.apartment?.title || "N/A"}
@@ -463,7 +440,6 @@ export default function StaffPage() {
                         {new Date(t.expirationDate).toLocaleDateString()}
                       </div>
                     </div>
-
                     <div className="flex justify-between items-center">
                       <span className="text-green-600 font-semibold">
                         GHC {(t.totalAmount || 0).toFixed(2)}
@@ -508,7 +484,6 @@ export default function StaffPage() {
                 <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
             </motion.div>
-
             <motion.div
               whileHover={{ y: -5 }}
               className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all"

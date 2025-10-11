@@ -161,7 +161,7 @@ export default function LoginPage() {
       <ToastContainer />
 
       {/* Left Section → Forms */}
-      <div className="w-full md:w-1/2 h-full flex flex-col justify-center px-8 sm:px-16 bg-white overflow-y-auto shadow-lg">
+      <div className="w-full mt-8 pt-22 md:w-1/2 h-full flex flex-col justify-center px-8 sm:px-16 bg-white overflow-y-auto shadow-lg">
         {/* Header */}
         <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
           Property Tracking System
