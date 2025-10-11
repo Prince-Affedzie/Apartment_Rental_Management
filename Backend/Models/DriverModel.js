@@ -5,38 +5,43 @@ const driverSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   lastName: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   phone: {
     type: String,
-    required: true
+    required: true,
   },
   address: {
     type: String,
-    required: true
+    required: true,
   },
   licenseNumber: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   licenseExpiry: {
     type: Date,
-    required: true
+    required: true,
   },
   isActive: {
     type: Boolean,
-    default: true
+    default: true,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },//Added UserID
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 const Driver = mongoose.model('Driver',driverSchema)

@@ -57,7 +57,7 @@ export default function LoginPage() {
     name: "",
     email: "",
     phone: "",
-    role: "",
+    role: "Staff",
     password: "",
     confirmPassword: "",
   });
@@ -141,7 +141,7 @@ export default function LoginPage() {
           name: "",
           email: "",
           phone: "",
-          role: "",
+          role: "Staff",
           password: "",
           confirmPassword: "",
         });
@@ -284,7 +284,8 @@ export default function LoginPage() {
           </div>
 
           {/* SIGNUP FORM */}
-          <div
+
+          {/* <div
             className={`transition-all duration-300 ${
               activeForm === "signup" ? "block" : "hidden"
             }`}
@@ -294,7 +295,7 @@ export default function LoginPage() {
                 Create Account
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-600">
                     Name
@@ -322,7 +323,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-600">
                     Phone
@@ -336,8 +337,9 @@ export default function LoginPage() {
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-600">
+                <div> */}
+
+          {/* <label className="block text-sm font-medium text-gray-600">
                     Role
                   </label>
                   <select
@@ -350,8 +352,21 @@ export default function LoginPage() {
                     <option value="Admin">Admin</option>
                     <option value="Manager">Manager</option>
                     <option value="Staff">Staff</option>
-                  </select>
-                </div>
+                  </select> */}
+
+          {/* Default for Staff */}
+
+          {/* <label className="block text-sm font-medium text-gray-600">
+                    Role
+                  </label>
+                  <input
+                    name="role"
+                    value="Staff"
+                    readOnly
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-not-allowed bg-gray-100"
+                  /> */}
+
+          {/* </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -388,11 +403,128 @@ export default function LoginPage() {
               </div>
 
               {/* Signup Button */}
-              <button
+          {/* <button
                 onClick={handleAddUser}
                 disabled={loading}
                 // className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all text-sm font-semibold shadow-md"
                 className="w-full bg-blue-600 text-white py-3 text-md rounded-xl hover:bg-blue-700 transition-all font-semibold shadow-md"
+              >
+                {loading ? "Signing-Up User..." : "Sign Up"}
+              </button>
+
+              {/* Switch to Login */}
+          {/* <p className="text-center text-sm text-gray-600 mt-4">
+                Already have an account?{" "}
+                <span
+                  onClick={() => setActiveForm("login")}
+                  className="text-blue-600 cursor-pointer hover:underline"
+                >
+                  Login
+                </span>
+              </p>
+            </div>
+          </div>   */}
+
+          {/* SIGNUP FORM */}
+          <div
+            className={`transition-all duration-300 ${
+              activeForm === "signup" ? "block" : "hidden"
+            }`}
+          >
+            <div className="space-y-4 max-w-lg mx-auto">
+              <h3 className="text-xl font-bold text-gray-700 text-center">
+                Create Account
+              </h3>
+
+              {/* Name (full row) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Name
+                </label>
+                <input
+                  name="name"
+                  value={newUser.name}
+                  onChange={handleNewUserChange}
+                  placeholder="Full Name"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl 
+                   bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Email + Phone (same row) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={newUser.email}
+                    onChange={handleNewUserChange}
+                    placeholder="Email Address"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl 
+                     bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={newUser.phone}
+                    onChange={handleNewUserChange}
+                    placeholder="Phone Number"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl 
+                     bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Password + Confirm Password (same row) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Password
+                  </label>
+                  <PasswordInput
+                    name="password"
+                    value={newUser.password}
+                    onChange={handleNewUserChange}
+                    placeholder="Password"
+                    showKey="signupPassword"
+                    showPasswords={showPasswords}
+                    setShowPasswords={setShowPasswords}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl 
+                     bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600">
+                    Confirm Password
+                  </label>
+                  <PasswordInput
+                    name="confirmPassword"
+                    value={newUser.confirmPassword}
+                    onChange={handleNewUserChange}
+                    placeholder="Confirm Password"
+                    showKey="signupConfirmPassword"
+                    showPasswords={showPasswords}
+                    setShowPasswords={setShowPasswords}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl 
+                     bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Signup Button */}
+              <button
+                onClick={handleAddUser}
+                disabled={loading}
+                className="w-full bg-blue-600 text-white py-3 text-md rounded-xl 
+                 hover:bg-blue-700 transition-all font-semibold shadow-md"
               >
                 {loading ? "Signing-Up User..." : "Sign Up"}
               </button>

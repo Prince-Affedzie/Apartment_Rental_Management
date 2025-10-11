@@ -4,6 +4,7 @@ import axios from "axios";
 //http://localhost:5000
 const API = axios.create({
   baseURL: "https://rental-vehicle-app-hfvqh.ondigitalocean.app/",
+  // baseURL: "http://localhost:5000",
   withCredentials: true,
 });
 export const login = (data) => API.post("/api/login", data);
