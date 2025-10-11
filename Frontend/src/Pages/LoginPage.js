@@ -86,8 +86,9 @@ export default function LoginPage() {
       const response = await login(payload);
       if (response.status === 200) {
         toast.success("Login Successful");
-        let userData = response.data;
+        let userData = response.data.user;
         let role = userData?.role;
+        console.log(userData, role);
 
         if (userData && role) {
           // Put server response directly into context

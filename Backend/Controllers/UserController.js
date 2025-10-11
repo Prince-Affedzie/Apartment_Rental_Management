@@ -71,7 +71,17 @@ const login = async (req, res) => {
       sameSite: "None",
     });
 
-    res.status(200).json({ message: "Login Successful" });
+    // res.status(200).json({ message: "Login Successful" });
+    res.status(200).json({
+      message: "Login Successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        // add other fields as needed
+      },
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Internal Server Error" });
