@@ -34,22 +34,40 @@ const modifyPayment = async (req, res) => {
   try {
     const { Id } = req.params;
     const update = req.body;
-    console.log(req.body)
+
     const payment = await Payment.findOne({ _id: Id, userId: req.userId });
-    const tenant = await Tenants.findById(payment.tenant)
+
     if (!payment) {
       return res.status(400).json({ message: "No Payment Found" });
     }
-   if( req.body.amountPaid && req.body.amountPaid !== payment.amountPaid){
-      tenant.totalAmount =  tenant.totalAmount - req.body.amountPaid
-      await tenant.save()
-   }
 
+    const tenant = await Tenants.findById(payment.tenant);
+    
+
+    
+    if (req.body.amountPaid && req.body.amountPaid !== payment.amountPaid) {
+      
+      const oldAmountPaid = payment.amountPaid;
+      const newAmountPaid = req.body.amountPaid;
+      
+      
+      const paymentDifference = newAmountPaid - oldAmountPaid;
+
+      
+      tenant.totalAmount = tenant.totalAmount - paymentDifference;
+      
+     
+      await tenant.save();
+    }
+    
+
+   
     Object.assign(payment, update);
     await payment.save();
+
     res.status(200).json({ message: "Payment Modified Successfully" });
   } catch (err) {
-    console.log(err);
+    console.error(err); // Use console.error for better logging
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
