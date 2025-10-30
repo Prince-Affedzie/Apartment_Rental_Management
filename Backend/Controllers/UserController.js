@@ -62,24 +62,35 @@ const login = async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.token
+      process.env.token,
+      { expiresIn: "7d" } // Optional but recommended
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    });
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "None",
+    // });
 
     // res.status(200).json({ message: "Login Successful" });
+    // res.status(200).json({
+    //   message: "Login Successful",
+    //   user: {
+    //     id: user._id,
+    //     name: user.name,
+    //     email: user.email,
+    //     role: user.role,
+    //     // add other fields as needed
+    //   },
+    // });
     res.status(200).json({
       message: "Login Successful",
+      token, // 👈 send token to frontend
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        // add other fields as needed
       },
     });
   } catch (err) {

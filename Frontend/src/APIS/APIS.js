@@ -2,11 +2,22 @@ import axios from "axios";
 //https://orange-winner-q7vw64jp5gjq246qw-5000.app.github.dev/
 //https://rental-vehicle-app-hfvqh.ondigitalocean.app/
 //http://localhost:5000
+axios.defaults.withCredentials = true;
 const API = axios.create({
-  baseURL: "https://rental-vehicle-app-hfvqh.ondigitalocean.app/",
-  // baseURL: "http://localhost:5000",
-  withCredentials: true,
+  // baseURL: "https://rental-vehicle-app-hfvqh.ondigitalocean.app/",
+  baseURL: "http://localhost:5000",
+  withCredentials: false, // as we using header based auth
 });
+
+// Attach token from localStorage to every request
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("authToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const login = (data) => API.post("/api/login", data);
 export const fetchProfileInfo = () => API.get("/api/view/profile_info");
 export const getAllUsers = () => API.get("/api/get/all_users");
@@ -33,13 +44,20 @@ export const updateUser = (data) => API.put("/api/modify/user/", data);
 export const removeUser = (Id) => API.delete(`/api/delete/user/${Id}`);
 // export const logout =()=>API.post('/api/logout')
 
-export const logout = async () => {
-  try {
-    const res = await API.post("/auth/logout", {}, { withCredentials: true });
-    return res;
-  } catch (err) {
-    return err.response || { status: 500, error: err.message };
-  }
+// export const logout = async () => {
+//   try {
+//     const res = await API.post("/auth/logout", {}, { withCredentials: true });
+//     return res;
+//   } catch (err) {
+//     return err.response || { status: 500, error: err.message };
+//   }
+// };
+
+// Logout After Header Based Auth
+export const logout = () => {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userProfile");
+  return Promise.resolve({ status: 200, message: "Logged out" });
 };
 
 // Payments

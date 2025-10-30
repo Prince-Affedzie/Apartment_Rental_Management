@@ -74,38 +74,91 @@ export default function LoginPage() {
     }
   };
 
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   const formData = new FormData(e.target);
+  //   const payload = {
+  //     email: formData.get("email"),
+  //     password: formData.get("password"),
+  //   };
+  //   try {
+  //     const response = await login(payload);
+  //     if (response.status === 200) {
+  //       toast.success("Login Successful");
+  //       let userData = response.data.user;
+  //       let role = userData?.role;
+  //       console.log(userData, role);
+
+  //       localStorage.setItem("userProfile", JSON.stringify(userData));
+
+  //       if (userData && role) {
+  //         // Put server response directly into context
+  //         setProfile(userData);
+  //       } else {
+  //         // Fallback: fetch profile (returns it now)
+  //         const prof = await getProfile();
+  //         role = prof?.role;
+  //       }
+
+  //       if (!role) {
+  //         toast.error("Unable to determine user role.");
+  //         return;
+  //       }
+
+  //       console.log("Routing with role:", role);
+  //       routeByRole(role);
+  //     } else {
+  //       toast.error(response.error || "Login failed");
+  //     }
+  //   } catch (err) {
+  //     toast.error(
+  //       err.response?.data?.message ||
+  //         err.response?.data?.error ||
+  //         "Login error"
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Handle Login After JWT Header Based Authentication
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     const formData = new FormData(e.target);
     const payload = {
       email: formData.get("email"),
       password: formData.get("password"),
     };
+
+    console.log(payload);
+
     try {
       const response = await login(payload);
+
       if (response.status === 200) {
         toast.success("Login Successful");
-        let userData = response.data.user;
-        let role = userData?.role;
-        console.log(userData, role);
 
-        if (userData && role) {
-          // Put server response directly into context
-          setProfile(userData);
+        const { user, token } = response.data; // ✅ get both
+        const role = user?.role;
+
+        // ✅ Store token in localStorage for future API requests
+        localStorage.setItem("authToken", token);
+
+        // ✅ Store user profile (optional)
+        localStorage.setItem("userProfile", JSON.stringify(user));
+
+        // ✅ Update context
+        setProfile(user);
+
+        // ✅ Navigate based on role
+        if (role) {
+          routeByRole(role);
         } else {
-          // Fallback: fetch profile (returns it now)
-          const prof = await getProfile();
-          role = prof?.role;
-        }
-
-        if (!role) {
           toast.error("Unable to determine user role.");
-          return;
         }
-
-        console.log("Routing with role:", role);
-        routeByRole(role);
       } else {
         toast.error(response.error || "Login failed");
       }
