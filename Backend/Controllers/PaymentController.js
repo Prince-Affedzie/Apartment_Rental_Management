@@ -1,4 +1,5 @@
 const { Payment } = require("../Models/ApartmentPaymentModel");
+const { Tenants } = require("../Models/Tenants");
 
 const addPayment = async (req, res) => {
   try {
@@ -11,7 +12,17 @@ const addPayment = async (req, res) => {
       date: Date,
       userId: req.userId,
     });
+
+    const tenantRecord = await Tenants.findById(tenant)
+    if(!tenantRecord){
+      return res.status(404).json({message: "Tenant Not Found"})
+    }
+    if( amountPaid >  tenantRecord.totalAmount){
+      return res.status(400).json({message:"The amount you Entered is Larger than the amount expected of the tenant."})
+    }
+    tenantRecord.totalAmount = tenantRecord.totalAmount - amountPaid
     await payment.save();
+    await  tenantRecord.save();
     res.status(200).json({ message: "Payment Added Successfully" });
   } catch (err) {
     console.log(err);
@@ -23,10 +34,17 @@ const modifyPayment = async (req, res) => {
   try {
     const { Id } = req.params;
     const update = req.body;
+    console.log(req.body)
     const payment = await Payment.findOne({ _id: Id, userId: req.userId });
+    const tenant = await Tenants.findById(payment.tenant)
     if (!payment) {
       return res.status(400).json({ message: "No Payment Found" });
     }
+   if( req.body.amountPaid && req.body.amountPaid !== payment.amountPaid){
+      tenant.totalAmount =  tenant.totalAmount - req.body.amountPaid
+      await tenant.save()
+   }
+
     Object.assign(payment, update);
     await payment.save();
     res.status(200).json({ message: "Payment Modified Successfully" });

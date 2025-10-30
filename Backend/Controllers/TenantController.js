@@ -1,5 +1,6 @@
 const { Tenants } = require("../Models/Tenants");
 const { Apartment } = require("../Models/Apartments");
+const { default: mongoose } = require("mongoose");
 
 const addRentRecord = async (req, res) => {
   try {
@@ -60,8 +61,11 @@ const editRecord = async (req, res) => {
   try {
     const { Id } = req.params;
     const update = req.body;
-
-    const record = await Tenants.findOne({ _id: Id, userId: req.userId });
+   
+  
+    const idObject = new mongoose.Types.ObjectId(Id);
+    
+    const record = await Tenants.findOne({ _id:idObject, userId: req.userId });
     if (!record) {
       return res.status(404).json({ message: "No Record Found" });
     }
@@ -92,7 +96,7 @@ const editRecord = async (req, res) => {
       ? record.apartment.toString()
       : null;
     const newApartmentId = req.body.apartment
-      ? req.body.apartment.toString()
+      ? req.body.apartment._id.toString()
       : null;
 
     if (newApartmentId && newApartmentId !== oldApartmentId) {
