@@ -1360,9 +1360,10 @@ export default function SettingsPage() {
     if (settings.timezone !== profile.timezone)
       updates.timezone = settings.timezone;
 
-    if (
-      (currentPassword || newPassword || confirmNewPassword) &&
-      (!currentPassword || !newPassword || !confirmNewPassword)
+   /* if (
+      (currentPassword || newPassword || confirmNewPassword) 
+
+    
     ) {
       toast.error("All password fields are required");
       return;
@@ -1374,7 +1375,7 @@ export default function SettingsPage() {
     ) {
       toast.error("New passwords do not match");
       return;
-    }
+    }*/
     if (newPassword) {
       updates.password = newPassword;
       updates.currentPassword = currentPassword;

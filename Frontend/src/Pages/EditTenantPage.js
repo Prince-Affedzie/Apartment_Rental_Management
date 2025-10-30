@@ -79,12 +79,11 @@ export default function EditTenantPage() {
   }, [Id, apartments]);
 
   useEffect(() => {
-    if (formData.monthlyPrice && formData.noOfMonthsRented && formData.amountPaidOnUtility) {
-      const total = parseFloat(formData.monthlyPrice) * parseFloat(formData.noOfMonthsRented) + 
-                   parseFloat(formData.amountPaidOnUtility);
+    if (formData.monthlyPrice && formData.noOfMonthsRented) {
+      const total = parseFloat(formData.monthlyPrice) * parseFloat(formData.noOfMonthsRented);
       setFormData(prev => ({ ...prev, totalAmount: total.toFixed(2) }));
     }
-  }, [formData.monthlyPrice, formData.noOfMonthsRented, formData.amountPaidOnUtility]);
+  }, [formData.monthlyPrice, formData.noOfMonthsRented]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
