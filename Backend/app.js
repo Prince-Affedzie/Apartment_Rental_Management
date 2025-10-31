@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const { Apartment } = require("./Models/Apartments");
 const { Tenants } = require("./Models/Tenants");
+const { Driver } = require("./Models/DriverModel");
 
 const { userRouter } = require("./Routes/UserRoutes");
 const { apartmentRouter } = require("./Routes/TenantsRoutes");
@@ -19,14 +20,7 @@ const { verifyToken } = require("./middleware/Authentication");
 
 startRentNotifier();
 
-const runMigrations = async () => {
-  try {
-    await Tenants.updateMany({}, { $set: { apartment: null } });
-    console.log("All users updated with default verification status");
-  } catch (err) {
-    console.error("Error during migration:", err);
-  }
-};
+
 
 // Enhanced request logger that shows user info AFTER authentication
 const requestLogger = (req, res, next) => {
@@ -58,13 +52,16 @@ app.use(cors({
   credentials: true
 }));
 
+
+
+
 app.use("/uploads", express.static("uploads"));
 mongoose
   .connect(process.env.DATABase_URL)
   .then(() => {
     app.listen(process.env.PORT, () => {
       console.log(`Listening on Port  ${process.env.PORT}`);
-
+     
       startRentNotifier();
     });
   })

@@ -1,4 +1,3 @@
-// ./Utils/rentNotifier.js
 const cron = require('node-cron');
 const moment = require('moment');
 const { sendSMSToList } = require('./SMSConfig');
@@ -12,39 +11,81 @@ function startRentNotifier() {
     console.log('📅 Running Rent Expiry Check Job...');
 
     try {
-      const today = moment();
-      const oneMonthAhead = moment().add(1, 'month').endOf('day');
+      const today = moment().startOf('day'); // Start of day for accurate comparison
+      
+      // Calculate exact dates for 3 months and 1 month from today
+      const exactlyThreeMonthsFromNow = today.clone().add(3, 'months');
+      const exactlyOneMonthFromNow = today.clone().add(1, 'month');
 
+      // Find tenants whose expiration date matches exactly 3 months or 1 month from today
       const tenants = await Tenants.find({
         expirationDate: {
-          $gte: today.toDate(),
-          $lte: oneMonthAhead.toDate()
+          $in: [
+            exactlyThreeMonthsFromNow.toDate(),
+            exactlyOneMonthFromNow.toDate()
+          ]
         }
       });
 
       if (tenants.length === 0) {
-        console.log('✅ No upcoming rent expirations.');
+        console.log('✅ No rent expirations at 3-month or 1-month mark today.');
         return;
       }
 
-      for (const tenant of tenants) {
-        const daysLeft = moment(tenant.expirationDate).diff(today, 'days');
-        const message = `Hi ${tenant.tenantName}, your rent expires in ${daysLeft} day(s) on ${moment(tenant.expirationDate).format('Do MMM YYYY')}. Please renew soon.`;
+      // Group tenants by notification type
+      const threeMonthTenants = tenants.filter(tenant => 
+        moment(tenant.expirationDate).isSame(exactlyThreeMonthsFromNow, 'day')
+      );
+      
+      const oneMonthTenants = tenants.filter(tenant => 
+        moment(tenant.expirationDate).isSame(exactlyOneMonthFromNow, 'day')
+      );
 
+      // Send notifications for 3-month mark tenants
+      for (const tenant of threeMonthTenants) {
+        const daysLeft = moment(tenant.expirationDate).diff(today, 'days');
+        const message = `Hi ${tenant.tenantName}, your rent expires in ${daysLeft} day(s) on ${moment(tenant.expirationDate).format('Do MMM YYYY')}. Please plan for renewal.`;
+        
         await sendSMSToList([tenant.tenantPhone], message);
       }
 
-      const admin = await User.findOne({ role: 'Admin' });
-      const tenantNames = tenants.map(t => t.tenantName).join(', ');
-      const shortMessage = `Reminder: These tenants' rents expire within 1 month: ${tenantNames}`;
-
-      if (admin?.phone) {
-        await sendSMSToList([admin.phone], shortMessage);
+      // Send notifications for 1-month mark tenants
+      for (const tenant of oneMonthTenants) {
+        const daysLeft = moment(tenant.expirationDate).diff(today, 'days');
+        const message = `Hi ${tenant.tenantName}, your rent expires in ${daysLeft} day(s) on ${moment(tenant.expirationDate).format('Do MMM YYYY')}. Please renew soon.`;
+        
+        await sendSMSToList([tenant.tenantPhone], message);
       }
 
-      console.log(`SMS reminders sent to ${tenants.length} tenants.`);
+      // Send admin notification
+      const admin = await User.findOne({ role: 'Admin' });
+      
+      if (admin?.phone) {
+        let adminMessage = '';
+        
+        if (threeMonthTenants.length > 0 && oneMonthTenants.length > 0) {
+          const threeMonthNames = threeMonthTenants.map(t => t.tenantName).join(', ');
+          const oneMonthNames = oneMonthTenants.map(t => t.tenantName).join(', ');
+          adminMessage = `Rent Reminders: ${threeMonthTenants.length} tenant(s) at 3-month mark (${threeMonthNames}), ${oneMonthTenants.length} tenant(s) at 1-month mark (${oneMonthNames})`;
+        } else if (threeMonthTenants.length > 0) {
+          const names = threeMonthTenants.map(t => t.tenantName).join(', ');
+          adminMessage = `Rent Reminders: ${threeMonthTenants.length} tenant(s) at 3-month mark: ${names}`;
+        } else if (oneMonthTenants.length > 0) {
+          const names = oneMonthTenants.map(t => t.tenantName).join(', ');
+          adminMessage = `Rent Reminders: ${oneMonthTenants.length} tenant(s) at 1-month mark: ${names}`;
+        }
+        
+        if (adminMessage) {
+          await sendSMSToList([admin.phone], adminMessage);
+        }
+      }
+
+      console.log(`📱 SMS reminders sent:`);
+      console.log(`   - ${threeMonthTenants.length} tenant(s) at 3-month mark`);
+      console.log(`   - ${oneMonthTenants.length} tenant(s) at 1-month mark`);
+      
     } catch (err) {
-      console.error(' Error during rent notifier cron:', err.message);
+      console.error('❌ Error during rent notifier cron:', err.message);
     }
   });
 
