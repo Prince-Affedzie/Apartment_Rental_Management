@@ -20,6 +20,7 @@ export default function EditTenantPage() {
   const [formLoading, setFormLoading] = useState(false);
   const [currentApartment, setCurrentApartment] = useState(null);
   const [selectedApartment, setSelectedApartment] = useState(null);
+  const [isTotalManual, setIsTotalManual] = useState(false);
 
   const [formData, setFormData] = useState({
     tenantName: '',
@@ -79,20 +80,34 @@ export default function EditTenantPage() {
   }, [Id, apartments]);
 
   useEffect(() => {
-    if (formData.monthlyPrice && formData.noOfMonthsRented) {
+    if (!isTotalManual && formData.monthlyPrice && formData.noOfMonthsRented) {
       const total = parseFloat(formData.monthlyPrice) * parseFloat(formData.noOfMonthsRented);
       setFormData(prev => ({ ...prev, totalAmount: total.toFixed(2) }));
     }
-  }, [formData.monthlyPrice, formData.noOfMonthsRented]);
+  }, [formData.monthlyPrice, formData.noOfMonthsRented, isTotalManual]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // If user manually edits totalAmount, set manual mode
+    if (name === 'totalAmount') {
+      setIsTotalManual(true);
+    }
   };
 
   const handleApartmentChange = (selectedOption) => {
     setSelectedApartment(selectedOption);
     setFormData(prev => ({ ...prev, apartment: selectedOption?.value || null }));
+  };
+
+  const handleRecalculateTotal = () => {
+    if (formData.monthlyPrice && formData.noOfMonthsRented) {
+      const total = parseFloat(formData.monthlyPrice) * parseFloat(formData.noOfMonthsRented);
+      setFormData(prev => ({ ...prev, totalAmount: total.toFixed(2) }));
+      setIsTotalManual(false);
+      toast.info('Total amount recalculated automatically');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -128,7 +143,7 @@ export default function EditTenantPage() {
     { label: 'Months Rented', name: 'noOfMonthsRented', type: 'number', icon: <FiCalendar /> },
     { label: 'Utility Amount (GHC)', name: 'amountPaidOnUtility', type: 'number', icon: <FiDollarSign /> },
     { label: 'Monthly Price (GHC)', name: 'monthlyPrice', type: 'number', icon: <FiDollarSign /> },
-    { label: 'Total Amount (GHC)', name: 'totalAmount', type: 'number', icon: <FiDollarSign />, readOnly: true }
+    { label: 'Total Amount (GHC)', name: 'totalAmount', type: 'number', icon: <FiDollarSign /> }
   ];
 
   return (
@@ -268,9 +283,22 @@ export default function EditTenantPage() {
                         </div>
                       ))}
                       
-                      {/* Total Amount */}
+                      {/* Total Amount with Recalculate Button */}
                       <div className="space-y-1 sm:col-span-3">
-                        <label className="block text-sm font-medium text-gray-700">{inputFields[8].label}</label>
+                        <div className="flex items-center justify-between">
+                          <label className="block text-sm font-medium text-gray-700">
+                            {inputFields[8].label}
+                          </label>
+                          {isTotalManual && (
+                            <button
+                              type="button"
+                              onClick={handleRecalculateTotal}
+                              className="text-xs text-blue-600 hover:text-blue-800 underline"
+                            >
+                              Recalculate Automatically
+                            </button>
+                          )}
+                        </div>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                             {inputFields[8].icon}
@@ -278,11 +306,17 @@ export default function EditTenantPage() {
                           <input
                             name={inputFields[8].name}
                             type={inputFields[8].type}
-                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             value={formData.totalAmount || ''}
-                            readOnly
+                            onChange={handleChange}
+                            placeholder="Enter total amount or let it calculate automatically"
                           />
                         </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {isTotalManual 
+                            ? "✓ Manual entry mode - amount won't auto-update" 
+                            : "Auto-calculated from monthly price × months rented"}
+                        </p>
                       </div>
                     </div>
                   </div>
