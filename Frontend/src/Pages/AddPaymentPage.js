@@ -13,6 +13,8 @@ export default function AddPaymentPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [tenantList, setTenantList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedTenantId, setSelectedTenantId] = useState("");
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const [formData, setFormData] = useState({
     tenant: "",
@@ -54,6 +56,19 @@ export default function AddPaymentPage() {
 
   const handleSelectChange = (selectedOption) => {
     setFormData((prev) => ({ ...prev, tenant: selectedOption.value }));
+    setSelectedTenantId(selectedOption.value);
+  };
+
+  const handleUpdateTenantDate = () => {
+    if (selectedTenantId) {
+      setShowUpdateModal(false);
+      navigate(`/apartments/tenant/edit/${selectedTenantId}`);
+    }
+  };
+
+  const handleContinueToList = () => {
+    setShowUpdateModal(false);
+    navigate("/apartments/payment/list");
   };
 
   const handleSubmit = async (e) => {
@@ -63,7 +78,7 @@ export default function AddPaymentPage() {
       const response = await addPayment(formData);
       if (response.status === 200) {
         toast.success("Payment Recorded Successfully");
-        navigate("/apartments/payment/list");
+        setShowUpdateModal(true);
       } else {
         toast.error(response.message || "An error occurred. Please try again.");
       }
@@ -82,6 +97,40 @@ export default function AddPaymentPage() {
   return (
     <div className="flex h-screen bg-gray-50">
       <ToastContainer />
+      
+      {/* Update Tenant Modal */}
+      {showUpdateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-green-100 rounded-full mb-4">
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">
+              Payment Successful!
+            </h3>
+            <p className="text-sm text-gray-600 text-center mb-6">
+              Would you like to update the tenant's expiration date?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleContinueToList}
+                className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition duration-200"
+              >
+                No, Continue
+              </button>
+              <button
+                onClick={handleUpdateTenantDate}
+                className="flex-1 px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                Update Date
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Sidebar
         toggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
         mobileMenuOpen={mobileMenuOpen}
