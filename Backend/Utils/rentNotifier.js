@@ -6,19 +6,19 @@ const { Tenants } = require('../Models/Tenants');
 const { User } = require('../Models/Users');
 
 function startRentNotifier() {
-  // Run on the **1st of every month at 8 AM (UTC)**
-  cron.schedule('0 8 1 * *', async () => {
+  // Run every 15 days at 8 AM (UTC)
+  cron.schedule('0 8 */15 * *', async () => {
     process.env.TZ = 'UTC'; // Ensure runs in UTC
     console.log('📅 Running Rent Expiry Check Job...');
 
     try {
       const today = moment();
-      const threeMonthsAhead = moment().add(3, 'months').endOf('day');
+      const oneMonthAhead = moment().add(1, 'month').endOf('day');
 
       const tenants = await Tenants.find({
         expirationDate: {
           $gte: today.toDate(),
-          $lte: threeMonthsAhead.toDate()
+          $lte: oneMonthAhead.toDate()
         }
       });
 
@@ -36,7 +36,7 @@ function startRentNotifier() {
 
       const admin = await User.findOne({ role: 'Admin' });
       const tenantNames = tenants.map(t => t.tenantName).join(', ');
-      const shortMessage = `Reminder: These tenants' rents expire within 3 months: ${tenantNames}`;
+      const shortMessage = `Reminder: These tenants' rents expire within 1 month: ${tenantNames}`;
 
       if (admin?.phone) {
         await sendSMSToList([admin.phone], shortMessage);
