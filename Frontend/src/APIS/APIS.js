@@ -4,8 +4,8 @@ import axios from "axios";
 //http://localhost:5000
 axios.defaults.withCredentials = true;
 const API = axios.create({
-  //baseURL: "https://rental-vehicle-app-hfvqh.ondigitalocean.app/",
-   baseURL: "http://localhost:5000",
+    baseURL: "https://rental-vehicle-app-hfvqh.ondigitalocean.app/",
+   //baseURL: "http://localhost:5000",
   withCredentials: false, // as we using header based auth
 });
 
