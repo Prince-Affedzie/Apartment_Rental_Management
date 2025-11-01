@@ -47,7 +47,7 @@ const login = async (req, res) => {
   try {
     console.log(req.body);
     const { email, password } = req.body;
-    if (!email || !password) {
+    if (!email) {
       return res.status(400).json({ message: "All Fields Are Required" });
     }
     const user = await User.findOne({ email: email });

@@ -29,6 +29,7 @@ export default function EditTenantPage() {
   const [formLoading, setFormLoading] = useState(false);
   const [currentApartment, setCurrentApartment] = useState(null);
   const [selectedApartment, setSelectedApartment] = useState(null);
+  const [isTotalManual, setIsTotalManual] = useState(false);
 
   const [formData, setFormData] = useState({
     tenantName: "",
@@ -115,6 +116,11 @@ export default function EditTenantPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // If user manually edits totalAmount, set manual mode
+    if (name === 'totalAmount') {
+      setIsTotalManual(true);
+    }
   };
 
   const handleApartmentChange = (selectedOption) => {
@@ -123,6 +129,15 @@ export default function EditTenantPage() {
       ...prev,
       apartment: selectedOption?.value || null,
     }));
+  };
+
+  const handleRecalculateTotal = () => {
+    if (formData.monthlyPrice && formData.noOfMonthsRented) {
+      const total = parseFloat(formData.monthlyPrice) * parseFloat(formData.noOfMonthsRented);
+      setFormData(prev => ({ ...prev, totalAmount: total.toFixed(2) }));
+      setIsTotalManual(false);
+      toast.info('Total amount recalculated automatically');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -386,6 +401,11 @@ export default function EditTenantPage() {
                             readOnly
                           />
                         </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {isTotalManual 
+                            ? "✓ Manual entry mode - amount won't auto-update" 
+                            : "Auto-calculated from monthly price × months rented"}
+                        </p>
                       </div>
                     </div>
                   </div>
