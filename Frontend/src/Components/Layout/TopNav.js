@@ -1,15 +1,24 @@
-import { Bell, Menu, X, Home, Users, Banknote, Search, ChevronDown, User } from 'lucide-react';
-import { useProfileContext } from '../../Context/fetchProfileContext';
-import { useEffect,useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import {
+  Bell,
+  Menu,
+  X,
+  Home,
+  Users,
+  Banknote,
+  Search,
+  ChevronDown,
+  User,
+} from "lucide-react";
+import { useProfileContext } from "../../Context/fetchProfileContext";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function TopNav({ toggleMobileMenu, mobileMenuOpen }) {
   const { profile, getProfile } = useProfileContext();
   const location = useLocation();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currency, setCurrency] = useState('GHC');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currency, setCurrency] = useState("GHC");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
 
   useEffect(() => {
     if (!profile) {
@@ -19,8 +28,8 @@ export default function TopNav({ toggleMobileMenu, mobileMenuOpen }) {
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Helper to check active link
@@ -36,38 +45,57 @@ export default function TopNav({ toggleMobileMenu, mobileMenuOpen }) {
             <button onClick={toggleMobileMenu} className="md:hidden mr-4">
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            
+
             {/* Branding */}
-            <h1 className="text-xl font-bold text-indigo-600 mr-8">Kassie Homes</h1>
-            
+            {/* <h1 className="text-xl font-bold text-indigo-600 mr-8">Kassie Homes</h1> */}
+
             {/* Main Navigation Links */}
-            <nav   style={{
-             display: windowWidth >= 1024 ? 'flex' : 'none',
-            }} className="space-x-1">
+            <nav
+              style={{
+                display: windowWidth >= 1024 ? "flex" : "none",
+              }}
+              className="space-x-1"
+            >
               <Link
                 to="/apartments/dashboard"
-                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center ${isActive('/apartments/dashboard') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center ${
+                  isActive("/apartments/dashboard")
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
               >
                 <Home className="mr-2 h-4 w-4" />
                 Overview
               </Link>
               <Link
                 to="/apartments/tenants"
-                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center ${isActive('/apartments/tenants') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center ${
+                  isActive("/apartments/tenants")
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
               >
                 <Users className="mr-2 h-4 w-4" />
                 Tenants
               </Link>
               <Link
                 to="/apartments/list"
-                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center ${isActive('/apartments/list') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center ${
+                  isActive("/apartments/list")
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
               >
                 <Home className="mr-2 h-4 w-4" />
                 Properties
               </Link>
               <Link
                 to="/apartments/payment/list"
-                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center ${isActive('/apartments/payment/list') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-4 py-2 text-sm font-medium rounded-md flex items-center ${
+                  isActive("/apartments/payment/list")
+                    ? "bg-indigo-100 text-indigo-700"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
               >
                 <Banknote className="mr-2 h-4 w-4" />
                 Finance
@@ -119,8 +147,10 @@ export default function TopNav({ toggleMobileMenu, mobileMenuOpen }) {
                 )}
               </div>
               <div className="hidden md:block ml-3 leading-tight">
-                <p className="font-medium">{profile?.name || 'User'}</p>
-                <p className="text-xs text-gray-500">{profile?.role || 'Role'}</p>
+                <p className="font-medium">{profile?.name || "User"}</p>
+                <p className="text-xs text-gray-500">
+                  {profile?.role || "Role"}
+                </p>
               </div>
             </div>
           </div>
