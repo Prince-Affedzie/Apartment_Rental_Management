@@ -324,8 +324,7 @@ export default function EditTenantPage() {
                               />
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
                       
                       {/* Total Amount with Recalculate Button */}
                       <div className="space-y-1 sm:col-span-3">
