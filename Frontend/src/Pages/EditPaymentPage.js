@@ -70,7 +70,7 @@ export default function EditPaymentPage() {
       const response = await editPayment(Id, payload);
       if (response.status === 200) {
         toast.success('Payment Record Modified Successfully');
-        navigate('/apartment/payment/list');
+        navigate('/apartments/payment/list');
       } else {
         toast.error(response.error || "An error occurred. Please try again");
       }

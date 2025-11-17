@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const { Apartment } = require("./Models/Apartments");
 const { Tenants } = require("./Models/Tenants");
+const { Driver } = require("./Models/DriverModel");
 
 const { userRouter } = require("./Routes/UserRoutes");
 const { apartmentRouter } = require("./Routes/TenantsRoutes");
@@ -19,14 +20,7 @@ const { verifyToken } = require("./middleware/Authentication");
 
 startRentNotifier();
 
-const runMigrations = async () => {
-  try {
-    await Tenants.updateMany({}, { $set: { apartment: null } });
-    console.log("All users updated with default verification status");
-  } catch (err) {
-    console.error("Error during migration:", err);
-  }
-};
+
 
 // Enhanced request logger that shows user info AFTER authentication
 const requestLogger = (req, res, next) => {
@@ -50,16 +44,16 @@ app.use(express.json());
 app.set("trust proxy", 1);
 
 //https://orange-winner-q7vw64jp5gjq246qw-3000.app.github.dev/
-// https://www.trackingproperty.com
-// http://localhost:3000
+    // https://www.trackingproperty.com
+    // http://localhost:3000
+//[process.env.Frontend_Url, process.env.Frontend_Url_Demo]
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
-app.use(
-  cors({
-    origin: [process.env.Frontend_Url, process.env.Frontend_Url_Demo],
-    // origin: ["http://localhost:3000"],
-    credentials: false,
-  })
-);
+
+
 
 app.use("/uploads", express.static("uploads"));
 mongoose
@@ -67,7 +61,7 @@ mongoose
   .then(() => {
     app.listen(process.env.PORT, () => {
       console.log(`Listening on Port  ${process.env.PORT}`);
-
+     
       startRentNotifier();
     });
   })
