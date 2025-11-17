@@ -1,15 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft,FiInfo, FiUser, FiPhone, FiHome, FiCalendar, FiDollarSign, FiCheck } from 'react-icons/fi';
-import Sidebar from '../Components/Layout/Sidebar';
-import TopNav from '../Components/Layout/TopNav';
-import { fetchTenantRecord, editTenant } from '../APIS/APIS';
+import React, { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  FiArrowLeft,
+  FiInfo,
+  FiUser,
+  FiPhone,
+  FiHome,
+  FiCalendar,
+  FiDollarSign,
+  FiCheck,
+} from "react-icons/fi";
+import Sidebar from "../Components/Layout/Sidebar";
+import TopNav from "../Components/Layout/TopNav";
+import { fetchTenantRecord, editTenant } from "../APIS/APIS";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ProcessingIndicator from '../Components/units/processingIndicator';
-import { fetchContext } from '../Context/initialFetchContext';
-import Select from 'react-select';
-import StatusBadge from '../Components/units/StatusBadge';
+import ProcessingIndicator from "../Components/units/processingIndicator";
+import { fetchContext } from "../Context/initialFetchContext";
+import Select from "react-select";
+import StatusBadge from "../Components/units/StatusBadge";
 
 export default function EditTenantPage() {
   const { Id } = useParams();
@@ -23,24 +32,24 @@ export default function EditTenantPage() {
   const [isTotalManual, setIsTotalManual] = useState(false);
 
   const [formData, setFormData] = useState({
-    tenantName: '',
-    tenantPhone: '',
-    roomDescription: '',
-    rentedDate: '',
+    tenantName: "",
+    tenantPhone: "",
+    roomDescription: "",
+    rentedDate: "",
     apartment: null,
-    expirationDate: '',
-    noOfMonthsRented: '',
-    amountPaidOnUtility: '',
-    monthlyPrice: '',
-    totalAmount: '',
-    status: 'Active',
+    expirationDate: "",
+    noOfMonthsRented: "",
+    amountPaidOnUtility: "",
+    monthlyPrice: "",
+    totalAmount: "",
+    status: "Active",
   });
 
   // Format apartments for select component
-  const apartmentOptions = apartments.map(apt => ({
+  const apartmentOptions = apartments.map((apt) => ({
     value: apt._id,
     label: `${apt.title} - ${apt.location}`,
-    status: apt.status
+    status: apt.status,
   }));
 
   useEffect(() => {
@@ -48,29 +57,36 @@ export default function EditTenantPage() {
       try {
         setLoading(true);
         const response = await fetchTenantRecord(Id);
-        
+
         if (response.status === 200) {
           const tenant = response.data;
-          const currentApt = apartments.find(a => a._id === tenant.apartment._id);
-          
+          const currentApt = apartments.find(
+            (a) => a._id === tenant.apartment._id
+          );
+
           setCurrentApartment(currentApt);
-          setSelectedApartment(currentApt ? { 
-            value: currentApt._id, 
-            label: `${currentApt.title} - ${currentApt.location}`,
-            status: currentApt.status
-          } : null);
+          setSelectedApartment(
+            currentApt
+              ? {
+                  value: currentApt._id,
+                  label: `${currentApt.title} - ${currentApt.location}`,
+                  status: currentApt.status,
+                }
+              : null
+          );
 
           setFormData({
             ...tenant,
-            rentedDate: tenant.rentedDate?.substring(0, 10) || '',
-            expirationDate: tenant.expirationDate?.substring(0, 10) || '',
+            apartment: tenant.apartment?._id || tenant.apartment,
+            rentedDate: tenant.rentedDate?.substring(0, 10) || "",
+            expirationDate: tenant.expirationDate?.substring(0, 10) || "",
           });
         } else {
-          toast.error('Failed to load tenant data');
+          toast.error("Failed to load tenant data");
         }
       } catch (err) {
         console.error(err);
-        toast.error('Failed to load tenant data');
+        toast.error("Failed to load tenant data");
       } finally {
         setLoading(false);
       }
@@ -98,7 +114,10 @@ export default function EditTenantPage() {
 
   const handleApartmentChange = (selectedOption) => {
     setSelectedApartment(selectedOption);
-    setFormData(prev => ({ ...prev, apartment: selectedOption?.value || null }));
+    setFormData((prev) => ({
+      ...prev,
+      apartment: selectedOption?.value || null,
+    }));
   };
 
   const handleRecalculateTotal = () => {
@@ -113,26 +132,27 @@ export default function EditTenantPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
-    
+
     try {
       const response = await editTenant(Id, formData);
       if (response.status === 200) {
-        toast.success('Tenant updated successfully!');
-        navigate('/apartments/tenants');
+        toast.success("Tenant updated successfully!");
+        navigate("/apartments/tenants");
       } else {
         toast.error(response.error || "Failed to update tenant");
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 
-                         error.response?.data?.error || 
-                         "Failed to update tenant";
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Failed to update tenant";
       toast.error(errorMessage);
     } finally {
       setFormLoading(false);
     }
   };
 
-  const toggleMobileMenu = () => setMobileMenuOpen(prev => !prev);
+  const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
 
   const inputFields = [
     { label: 'Tenant Name', name: 'tenantName', type: 'text', icon: <FiUser /> },
@@ -149,11 +169,17 @@ export default function EditTenantPage() {
   return (
     <div className="flex h-screen bg-gray-50">
       <ToastContainer position="top-right" autoClose={5000} />
-      <Sidebar toggleMobileMenu={toggleMobileMenu} mobileMenuOpen={mobileMenuOpen} />
-      
+      <Sidebar
+        toggleMobileMenu={toggleMobileMenu}
+        mobileMenuOpen={mobileMenuOpen}
+      />
+
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopNav toggleMobileMenu={toggleMobileMenu} mobileMenuOpen={mobileMenuOpen} />
-        
+        <TopNav
+          toggleMobileMenu={toggleMobileMenu}
+          mobileMenuOpen={mobileMenuOpen}
+        />
+
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100">
           <div className="max-w-4xl mx-auto">
             {/* Header Section */}
@@ -164,7 +190,9 @@ export default function EditTenantPage() {
               >
                 <FiArrowLeft className="mr-2" /> Back to Tenants
               </button>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Edit Tenant</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                Edit Tenant
+              </h1>
             </div>
 
             {/* Current Apartment Card */}
@@ -195,7 +223,10 @@ export default function EditTenantPage() {
               {loading ? (
                 <div className="p-6 space-y-4 animate-pulse">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className="h-12 bg-gray-200 rounded w-full"></div>
+                    <div
+                      key={i}
+                      className="h-12 bg-gray-200 rounded w-full"
+                    ></div>
                   ))}
                 </div>
               ) : (
@@ -205,27 +236,31 @@ export default function EditTenantPage() {
                     <h2 className="text-xl font-semibold text-gray-800 flex items-center">
                       <FiUser className="mr-2" /> Tenant Information
                     </h2>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {inputFields.slice(0, 3).map(({ label, name, type, icon, placeholder }) => (
-                        <div key={name} className="space-y-1">
-                          <label className="block text-sm font-medium text-gray-700">{label}*</label>
-                          <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                              {icon}
+                      {inputFields
+                        .slice(0, 3)
+                        .map(({ label, name, type, icon, placeholder }) => (
+                          <div key={name} className="space-y-1">
+                            <label className="block text-sm font-medium text-gray-700">
+                              {label}*
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                {icon}
+                              </div>
+                              <input
+                                name={name}
+                                type={type}
+                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                value={formData[name] || ""}
+                                placeholder={placeholder}
+                                onChange={handleChange}
+                                required
+                              />
                             </div>
-                            <input
-                              name={name}
-                              type={type}
-                              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              value={formData[name] || ''}
-                              placeholder={placeholder}
-                              onChange={handleChange}
-                              required
-                            />
                           </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   </div>
 
@@ -234,26 +269,30 @@ export default function EditTenantPage() {
                     <h2 className="text-xl font-semibold text-gray-800 flex items-center">
                       <FiCalendar className="mr-2" /> Rental Information
                     </h2>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {inputFields.slice(3, 5).map(({ label, name, type, icon }) => (
-                        <div key={name} className="space-y-1">
-                          <label className="block text-sm font-medium text-gray-700">{label}*</label>
-                          <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                              {icon}
+                      {inputFields
+                        .slice(3, 5)
+                        .map(({ label, name, type, icon }) => (
+                          <div key={name} className="space-y-1">
+                            <label className="block text-sm font-medium text-gray-700">
+                              {label}*
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                {icon}
+                              </div>
+                              <input
+                                name={name}
+                                type={type}
+                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                value={formData[name] || ""}
+                                onChange={handleChange}
+                                required
+                              />
                             </div>
-                            <input
-                              name={name}
-                              type={type}
-                              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              value={formData[name] || ''}
-                              onChange={handleChange}
-                              required
-                            />
                           </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   </div>
 
@@ -262,23 +301,28 @@ export default function EditTenantPage() {
                     <h2 className="text-xl font-semibold text-gray-800 flex items-center">
                       <FiDollarSign className="mr-2" /> Financial Information
                     </h2>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {inputFields.slice(5, 8).map(({ label, name, type, icon }) => (
-                        <div key={name} className="space-y-1">
-                          <label className="block text-sm font-medium text-gray-700">{label}*</label>
-                          <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                              {icon}
+                      {inputFields
+                        .slice(5, 8)
+                        .map(({ label, name, type, icon }) => (
+                          <div key={name} className="space-y-1">
+                            <label className="block text-sm font-medium text-gray-700">
+                              {label}*
+                            </label>
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                {icon}
+                              </div>
+                              <input
+                                name={name}
+                                type={type}
+                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                value={formData[name] || ""}
+                                onChange={handleChange}
+                                required
+                              />
                             </div>
-                            <input
-                              name={name}
-                              type={type}
-                              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              value={formData[name] || ''}
-                              onChange={handleChange}
-                              required
-                            />
                           </div>
                         </div>
                       ))}
@@ -326,12 +370,12 @@ export default function EditTenantPage() {
                     <h2 className="text-xl font-semibold text-gray-800 flex items-center">
                       <FiHome className="mr-2" /> Change Apartment Assignment
                     </h2>
-                    
+
                     <div className="space-y-2">
                       <label className="block text-sm font-medium text-gray-700">
                         Select New Apartment
                       </label>
-                      
+
                       {apartments.length > 0 ? (
                         <Select
                           options={apartmentOptions}
@@ -344,26 +388,30 @@ export default function EditTenantPage() {
                           styles={{
                             control: (provided) => ({
                               ...provided,
-                              minHeight: '44px',
-                              border: '1px solid #d1d5db',
-                              borderRadius: '0.5rem',
-                              '&:hover': {
-                                borderColor: '#d1d5db'
-                              }
+                              minHeight: "44px",
+                              border: "1px solid #d1d5db",
+                              borderRadius: "0.5rem",
+                              "&:hover": {
+                                borderColor: "#d1d5db",
+                              },
                             }),
                             option: (provided, state) => ({
                               ...provided,
-                              backgroundColor: state.isSelected ? '#3b82f6' : state.isFocused ? '#f3f4f6' : 'white',
-                              color: state.isSelected ? 'white' : '#1f2937',
-                              '&:active': {
-                                backgroundColor: '#3b82f6',
-                                color: 'white'
-                              }
+                              backgroundColor: state.isSelected
+                                ? "#3b82f6"
+                                : state.isFocused
+                                ? "#f3f4f6"
+                                : "white",
+                              color: state.isSelected ? "white" : "#1f2937",
+                              "&:active": {
+                                backgroundColor: "#3b82f6",
+                                color: "white",
+                              },
                             }),
                             singleValue: (provided) => ({
                               ...provided,
-                              color: '#1f2937'
-                            })
+                              color: "#1f2937",
+                            }),
                           }}
                         />
                       ) : (
@@ -374,7 +422,8 @@ export default function EditTenantPage() {
                             </div>
                             <div className="ml-3">
                               <p className="text-sm text-yellow-700">
-                                No apartments available. Please add apartments first.
+                                No apartments available. Please add apartments
+                                first.
                               </p>
                             </div>
                           </div>
@@ -388,9 +437,11 @@ export default function EditTenantPage() {
                     <h2 className="text-xl font-semibold text-gray-800 flex items-center">
                       <FiCheck className="mr-2" /> Status
                     </h2>
-                    
+
                     <div className="space-y-1">
-                      <label className="block text-sm font-medium text-gray-700">Tenant Status*</label>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Tenant Status*
+                      </label>
                       <select
                         name="status"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -417,7 +468,7 @@ export default function EditTenantPage() {
                     <button
                       type="submit"
                       className={`px-6 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors flex items-center ${
-                        formLoading ? 'opacity-75 cursor-not-allowed' : ''
+                        formLoading ? "opacity-75 cursor-not-allowed" : ""
                       }`}
                       disabled={formLoading}
                     >
