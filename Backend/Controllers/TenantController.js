@@ -93,10 +93,10 @@ const editRecord = async (req, res) => {
     // }
 
     const oldApartmentId = record.apartment
-      ? record.apartment.toString()
+      ? record.apartment
       : null;
     const newApartmentId = req.body.apartment
-      ? req.body.apartment._id.toString()
+      ? req.body.apartment._id
       : null;
 
     if (newApartmentId && newApartmentId !== oldApartmentId) {
