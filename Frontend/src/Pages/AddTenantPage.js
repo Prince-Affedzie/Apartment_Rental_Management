@@ -40,6 +40,10 @@ export default function AddTenantPage() {
     label: `${apartment.title} - ${apartment.location} (${apartment.status})`
   }));
 
+  useEffect(()=>{
+    fetchApartments()
+  },[])
+
   const toggleMobileMenu = () => setMobileMenuOpen(prev => !prev);
 
   const handleChange = (e) => {

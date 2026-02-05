@@ -30,6 +30,10 @@ export default function AddPropertyPage() {
     label: `${tenant.tenantName} (${tenant.tenantPhone})`
   }));
 
+  useEffect(()=>{
+    fetchTenants()
+  },[])
+
   useEffect(() => {
     // Update formData tenants when selectedTenants changes
     setFormData(prev => ({
