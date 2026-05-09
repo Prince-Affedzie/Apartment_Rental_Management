@@ -95,20 +95,43 @@ export default function EditTenantPage() {
     fetchData();
   }, [Id, apartments]);
 
-  useEffect(() => {
-    if (!isTotalManual && formData.monthlyPrice && formData.noOfMonthsRented) {
-      const total = parseFloat(formData.monthlyPrice) * parseFloat(formData.noOfMonthsRented);
-      setFormData(prev => ({ ...prev, totalAmount: total.toFixed(2) }));
-    }
-  }, [formData.monthlyPrice, formData.noOfMonthsRented, isTotalManual]);
+  // REMOVED the automatic total amount useEffect.
+  // Calculation now only happens inside handleChange when the user edits monthlyPrice or noOfMonthsRented.
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    
-    // If user manually edits totalAmount, set manual mode
-    if (name === 'totalAmount') {
+
+    // If user manually edits totalAmount, set manual mode and update normally
+    if (name === "totalAmount") {
       setIsTotalManual(true);
+      setFormData((prev) => ({ ...prev, totalAmount: value }));
+      return;
+    }
+
+    // If editing monthlyPrice or noOfMonthsRented AND not in manual mode, recalculate total
+    if (
+      (name === "monthlyPrice" || name === "noOfMonthsRented") &&
+      !isTotalManual
+    ) {
+      const monthly =
+        name === "monthlyPrice" ? value : formData.monthlyPrice;
+      const months =
+        name === "noOfMonthsRented" ? value : formData.noOfMonthsRented;
+
+      if (monthly && months) {
+        const total = parseFloat(monthly) * parseFloat(months);
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+          totalAmount: total.toFixed(2),
+        }));
+      } else {
+        // If either field is empty, just update the changed field without changing total
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+    } else {
+      // For all other fields, simply update the formData
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -122,10 +145,11 @@ export default function EditTenantPage() {
 
   const handleRecalculateTotal = () => {
     if (formData.monthlyPrice && formData.noOfMonthsRented) {
-      const total = parseFloat(formData.monthlyPrice) * parseFloat(formData.noOfMonthsRented);
-      setFormData(prev => ({ ...prev, totalAmount: total.toFixed(2) }));
+      const total =
+        parseFloat(formData.monthlyPrice) * parseFloat(formData.noOfMonthsRented);
+      setFormData((prev) => ({ ...prev, totalAmount: total.toFixed(2) }));
       setIsTotalManual(false);
-      toast.info('Total amount recalculated automatically');
+      toast.info("Total amount recalculated automatically");
     }
   };
 
@@ -155,15 +179,15 @@ export default function EditTenantPage() {
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
 
   const inputFields = [
-    { label: 'Tenant Name', name: 'tenantName', type: 'text', icon: <FiUser /> },
-    { label: 'Phone Number', name: 'tenantPhone', type: 'tel', icon: <FiPhone />, placeholder: '+233XXXXXXXXX' },
-    { label: 'Room Description', name: 'roomDescription', type: 'text', icon: <FiHome /> },
-    { label: 'Rented Date', name: 'rentedDate', type: 'date', icon: <FiCalendar /> },
-    { label: 'Expiration Date', name: 'expirationDate', type: 'date', icon: <FiCalendar /> },
-    { label: 'Months Rented', name: 'noOfMonthsRented', type: 'number', icon: <FiCalendar /> },
-    { label: 'Utility Amount (GHC)', name: 'amountPaidOnUtility', type: 'number', icon: <FiDollarSign /> },
-    { label: 'Monthly Price (GHC)', name: 'monthlyPrice', type: 'number', icon: <FiDollarSign /> },
-    { label: 'Total Amount (GHC)', name: 'totalAmount', type: 'number', icon: <FiDollarSign /> }
+    { label: "Tenant Name", name: "tenantName", type: "text", icon: <FiUser /> },
+    { label: "Phone Number", name: "tenantPhone", type: "tel", icon: <FiPhone />, placeholder: "+233XXXXXXXXX" },
+    { label: "Room Description", name: "roomDescription", type: "text", icon: <FiHome /> },
+    { label: "Rented Date", name: "rentedDate", type: "date", icon: <FiCalendar /> },
+    { label: "Expiration Date", name: "expirationDate", type: "date", icon: <FiCalendar /> },
+    { label: "Months Rented", name: "noOfMonthsRented", type: "number", icon: <FiCalendar /> },
+    { label: "Utility Amount (GHC)", name: "amountPaidOnUtility", type: "number", icon: <FiDollarSign /> },
+    { label: "Monthly Price (GHC)", name: "monthlyPrice", type: "number", icon: <FiDollarSign /> },
+    { label: "Total Amount (GHC)", name: "totalAmount", type: "number", icon: <FiDollarSign /> },
   ];
 
   return (
@@ -350,14 +374,14 @@ export default function EditTenantPage() {
                             name={inputFields[8].name}
                             type={inputFields[8].type}
                             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            value={formData.totalAmount || ''}
+                            value={formData.totalAmount || ""}
                             onChange={handleChange}
                             placeholder="Enter total amount or let it calculate automatically"
                           />
                         </div>
                         <p className="text-xs text-gray-500 mt-1">
-                          {isTotalManual 
-                            ? "✓ Manual entry mode - amount won't auto-update" 
+                          {isTotalManual
+                            ? "✓ Manual entry mode - amount won't auto-update"
                             : "Auto-calculated from monthly price × months rented"}
                         </p>
                       </div>
