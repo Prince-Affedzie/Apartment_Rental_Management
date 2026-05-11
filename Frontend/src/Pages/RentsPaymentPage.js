@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../Components/Layout/Sidebar";
 import { useNavigate } from "react-router-dom";
-import { getAllPayments } from "../APIS/APIS";
-import { deletePayment } from "../APIS/APIS";
+import { getAllPayments, deletePayment } from "../APIS/APIS";
 import { Pencil, Trash2 } from "lucide-react";
 import TopNav from "../Components/Layout/TopNav";
 import exportToExcel from "../Utils/exportToExcel";
@@ -11,13 +10,12 @@ export default function PaymentsListPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const paymentsPerPage = 8;
+  const [paymentsPerPage] = useState(8);
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen((prev) => !prev);
-  };
+
+  const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
 
   const fields = [
     { key: "tenant.tenantName", label: "Tenant Name" },
@@ -45,8 +43,7 @@ export default function PaymentsListPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this payment?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this payment?")) return;
     try {
       await deletePayment(id);
       setPayments((prev) => prev.filter((p) => p._id !== id));
@@ -59,50 +56,90 @@ export default function PaymentsListPage() {
     fetchPayments();
   }, []);
 
-  const filteredPayments = payments.filter(
-    (p) =>
-      p?.tenant?.tenantName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      false
+  // Filtered payments (sorted for consistency if needed)
+  const filteredPayments = payments.filter((p) =>
+    p?.tenant?.tenantName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Reset page to 1 whenever searchTerm changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  // Ensure current page doesn't exceed total pages after deletions or search change
+  const totalPages = Math.max(1, Math.ceil(filteredPayments.length / paymentsPerPage));
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
 
   const indexOfLast = currentPage * paymentsPerPage;
   const indexOfFirst = indexOfLast - paymentsPerPage;
   const currentPayments = filteredPayments.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filteredPayments.length / paymentsPerPage);
-  const totalAmountPaid = filteredPayments.reduce(
-    (sum, p) => sum + (p.amountPaid || 0),
-    0
-  );
+  const totalAmountPaid = filteredPayments.reduce((sum, p) => sum + (p.amountPaid || 0), 0);
 
-  const Pagination = () => (
-    <div className="flex justify-center mt-6 gap-2 flex-wrap">
-      <button
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        disabled={currentPage === 1}
-        className="px-3 py-1 border rounded disabled:opacity-50"
-      >
-        Previous
-      </button>
-      {Array.from({ length: totalPages }, (_, i) => (
+  const Pagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pageNumbers = [];
+    const maxButtons = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+    let endPage = startPage + maxButtons - 1;
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(1, endPage - maxButtons + 1);
+    }
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="flex justify-center mt-6 gap-2 flex-wrap items-center">
         <button
-          key={i}
-          onClick={() => setCurrentPage(i + 1)}
-          className={`px-3 py-1 border rounded ${
-            currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-          }`}
+          onClick={() => setCurrentPage(1)}
+          disabled={currentPage === 1}
+          className="px-3 py-1 border rounded disabled:opacity-50"
         >
-          {i + 1}
+          First
         </button>
-      ))}
-      <button
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-        disabled={currentPage === totalPages}
-        className="px-3 py-1 border rounded disabled:opacity-50"
-      >
-        Next
-      </button>
-    </div>
-  );
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        {startPage > 1 && <span className="px-2">…</span>}
+        {pageNumbers.map((num) => (
+          <button
+            key={num}
+            onClick={() => setCurrentPage(num)}
+            className={`px-3 py-1 border rounded ${
+              currentPage === num ? "bg-blue-500 text-white" : ""
+            }`}
+          >
+            {num}
+          </button>
+        ))}
+        {endPage < totalPages && <span className="px-2">…</span>}
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+        <button
+          onClick={() => setCurrentPage(totalPages)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Last
+        </button>
+      </div>
+    );
+  };
 
   const LoadingSkeleton = () => (
     <div className="overflow-x-auto bg-white shadow-md rounded-lg">
@@ -110,10 +147,7 @@ export default function PaymentsListPage() {
         <thead className="bg-gray-100">
           <tr>
             {[...Array(6)].map((_, i) => (
-              <th
-                key={i}
-                className="px-4 py-2 text-left text-sm font-semibold text-gray-600"
-              >
+              <th key={i} className="px-4 py-2 text-left text-sm font-semibold text-gray-600">
                 <div className="h-4 bg-gray-300 rounded w-24"></div>
               </th>
             ))}
@@ -136,10 +170,7 @@ export default function PaymentsListPage() {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-x-hidden">
-      <Sidebar
-        toggleMobileMenu={toggleMobileMenu}
-        mobileMenuOpen={mobileMenuOpen}
-      />
+      <Sidebar toggleMobileMenu={toggleMobileMenu} mobileMenuOpen={mobileMenuOpen} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopNav
@@ -166,9 +197,7 @@ export default function PaymentsListPage() {
                 + Add Payment
               </button>
               <button
-                onClick={() =>
-                  exportToExcel(currentPayments, "Payments_List", fields)
-                }
+                onClick={() => exportToExcel(currentPayments, "Payments_List", fields)}
                 className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition lg:ml-3"
               >
                 Export Payments
@@ -179,9 +208,7 @@ export default function PaymentsListPage() {
           {loading ? (
             <LoadingSkeleton />
           ) : currentPayments.length === 0 ? (
-            <div className="text-center text-gray-500 py-10">
-              No payments found.
-            </div>
+            <div className="text-center text-gray-500 py-10">No payments found.</div>
           ) : (
             <div className="overflow-x-auto bg-white shadow-md rounded-lg w-full">
               <div className="text-right text-blue-700 font-semibold mb-2 pr-2">
@@ -190,49 +217,25 @@ export default function PaymentsListPage() {
               <table className="min-w-full table-auto text-sm">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-4 py-2 text-left font-semibold text-gray-600">
-                      Tenant
-                    </th>
-                    <th className="px-4 py-2 text-left font-semibold text-gray-600">
-                      Amount
-                    </th>
-                    <th className="px-4 py-2 text-left font-semibold text-gray-600">
-                      Date
-                    </th>
-                    <th className="px-4 py-2 text-left font-semibold text-gray-600">
-                      Method
-                    </th>
-                    <th className="px-4 py-2 text-left font-semibold text-gray-600">
-                      Status
-                    </th>
-                    <th className="px-4 py-2 text-left font-semibold text-gray-600">
-                      Actions
-                    </th>
+                    <th className="px-4 py-2 text-left font-semibold text-gray-600">Tenant</th>
+                    <th className="px-4 py-2 text-left font-semibold text-gray-600">Amount</th>
+                    <th className="px-4 py-2 text-left font-semibold text-gray-600">Date</th>
+                    <th className="px-4 py-2 text-left font-semibold text-gray-600">Method</th>
+                    <th className="px-4 py-2 text-left font-semibold text-gray-600">Status</th>
+                    <th className="px-4 py-2 text-left font-semibold text-gray-600">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentPayments.map((payment) => (
                     <tr key={payment._id} className="border-b hover:bg-gray-50">
-                      <td className="px-4 py-4">
-                        {/* {payment.tenant?.tenantName} */}
-
-                        {payment.tenant?.tenantName || "N/A"}
-                      </td>
+                      <td className="px-4 py-4">{payment.tenant?.tenantName || "N/A"}</td>
                       <td className="px-4 py-4 font-medium text-green-700">
                         GHC {payment.amountPaid || 0}
                       </td>
-                      {/* <td className="px-4 py-4 text-gray-600">{new Date(payment.date || 'N/A').toDateString()}</td>
-                       */}
-
                       <td className="px-4 py-4 text-gray-600">
-                        {payment.date
-                          ? new Date(payment.date).toDateString()
-                          : "N/A"}
+                        {payment.date ? new Date(payment.date).toDateString() : "N/A"}
                       </td>
-
-                      <td className="px-4 py-4 text-gray-600">
-                        {payment.method || "N/A"}
-                      </td>
+                      <td className="px-4 py-4 text-gray-600">{payment.method || "N/A"}</td>
                       <td className="px-4 py-4">
                         <span
                           className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -246,24 +249,12 @@ export default function PaymentsListPage() {
                       </td>
                       <td className="px-4 py-4 flex gap-2">
                         <button
-                          onClick={() =>
-                            navigate(`/apartment/edit_payment/${payment._id}`)
-                          }
+                          onClick={() => navigate(`/apartment/edit_payment/${payment._id}`)}
                           className="text-blue-600 hover:text-blue-800"
                           title="Edit"
                         >
                           <Pencil size={16} />
                         </button>
-                        {/* <button
-                          onClick={() =>
-                            console.log("Delete clicked:", payment)
-                          }
-                          className="text-red-600 hover:text-red-800"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button> */}
-
                         <button
                           onClick={() => handleDelete(payment._id)}
                           className="text-red-600 hover:text-red-800"
@@ -279,7 +270,7 @@ export default function PaymentsListPage() {
             </div>
           )}
 
-          {totalPages > 1 && <Pagination />}
+          <Pagination />
         </main>
       </div>
     </div>
